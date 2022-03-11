@@ -48,8 +48,13 @@ class Board:
     def parse_instance(filename: str):
         """ Lê o ficheiro cujo caminho é passado como argumento e retorna
         uma instância da classe Board. """
-        # TODO
-        pass
+        board = []
+        with open(filename, "r") as f:
+            for line in f:
+                # index 0 --> N
+                row = [column.strip() for column in line.split('\t')]
+                board.append(row)
+        return board
 
     # TODO: outros metodos da classe
 
@@ -92,6 +97,8 @@ class Numbrix(Problem):
 if __name__ == "__main__":
     # TODO:
     # Ler o ficheiro de input de sys.argv[1],
+    board = Board.parse_instance(sys.argv[1])
+    print(board)
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.

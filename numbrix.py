@@ -46,8 +46,14 @@ class Board:
     def adjacent_horizontal_numbers(self, row: int, col: int):
         """ Devolve os valores imediatamente à esquerda e à direita, 
         respectivamente. """
-        # TODO
-        pass
+        if (col-2 >= 1):
+            if(col <= int(self[0][0])):
+                return (int(self[row][col-2]), int(self[row][col]))
+            else:
+                return (-1, int(self[row][col]))
+        else:
+            if(col <= int(self[0][0])):
+                return (int(self[row][col-2]), -1)
     
     @staticmethod    
     def parse_instance(filename: str):

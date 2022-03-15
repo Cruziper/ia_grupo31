@@ -29,10 +29,9 @@ class Board:
     
     def get_number(self, row: int, col: int) -> int:
         """ Devolve o valor na respetiva posição do tabuleiro. """
-        # TODO
-        pass
+        return self[row][col-1]
     
-    def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
+    def adjacent_vertical_numbers(self, row: int, col: int):
         """ Devolve os valores imediatamente abaixo e acima, 
         respectivamente. """
         if (row-1 >= 1):
@@ -44,7 +43,7 @@ class Board:
             if(row+1 <= int(self[0][0])):
                 return (int(self[row+1][col-1]), -1)
     
-    def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
+    def adjacent_horizontal_numbers(self, row: int, col: int):
         """ Devolve os valores imediatamente à esquerda e à direita, 
         respectivamente. """
         # TODO

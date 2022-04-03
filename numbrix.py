@@ -22,6 +22,9 @@ class NumbrixState:
 
     def __lt__(self, other):
         return self.id < other.id
+    
+    def __board__(self):
+        return self.board
         
     # TODO: outros metodos da classe
 
@@ -44,16 +47,16 @@ class Board:
             if(row+1 <= Board.boardSize):
                 """ Se tiver casa imediatamente abaixo e acima
                 Return: ([linha+1][coluna], [linha-1][coluna]) """
-                return (int(self[Board.findRow(row+1)][Board.findColumn(col)]), int(self[Board.findRow(row-1)][Board.findColumn(col)]))
+                return (int(Board.get_number(self,row+1, col)), int(Board.get_number(self, row-1, col)))
             else:
                 """ Se tiver apenas casa imediatamente acima
                 Return: (None, [linha-1][coluna]) """
-                return (None, int(self[Board.findRow(row-1)][Board.findColumn(col)]))
+                return (None, int(Board.get_number(self, row-1, col)))
         else:
             if(row+1 <= Board.boardSize):
                 """ Se tiver apenas casa imediatamente abaixo
                 Return: ([linha+1][coluna], None) """
-                return (int(self[Board.findRow(row+1)][Board.findColumn(col)]), None)
+                return (int(Board.get_number(self,row+1, col)), None)
     
     def adjacent_horizontal_numbers(self, row: int, col: int):
         """ Devolve os valores imediatamente à esquerda e à direita, 
@@ -62,16 +65,16 @@ class Board:
             if(col+1 <= Board.boardSize):
                 """ Se tiver casa imediatamente à esquerda e à direita
                 Return: ([linha][coluna-1], [linha][coluna+1]) """
-                return (int(self[Board.findRow(row)][Board.findColumn(col-1)]), int(self[Board.findRow(row)][Board.findColumn(col+1)]))
+                return (int(Board.get_number(self,row, col-1)), int(Board.get_number(self,row, col+1)))
             else:
                 """ Se tiver apenas casa imediatamente à esquerda
                 Return: ([linha][coluna-1], None) """
-                return (int(self[Board.findRow(row)][Board.findColumn(col-1)]), None)
+                return (int(Board.get_number(self,row, col-1)), None)
         else:
             if(col <= Board.boardSize):
                 """ Se tiver apenas casa imediatamente à direita
                 Return: (None, [linha][coluna+1]) """
-                return (None, int(self[Board.findRow(row)][Board.findColumn(col+1)]))
+                return (None, int(Board.get_number(self,row, col+1)))
     
     @staticmethod    
     def parse_instance(filename: str):
@@ -95,6 +98,9 @@ class Board:
         """ devolve o valor do index da coluna """
         return col-1
 
+    def __size__():
+        return Board.boardSize
+
 ###################################################################################################
 #                                            NUMBRIX                                              #
 ###################################################################################################
@@ -106,9 +112,18 @@ class Numbrix(Problem):
 
     def actions(self, state: NumbrixState):
         """ Retorna uma lista de ações que podem ser executadas a
-        partir do estado passado como argumento. """
-        # TODO
-        pass
+        partir do estado passado como argumento. 
+        RETURN: [(linha, coluna, valor),(linha, coluna, valor),(linha, coluna, valor), ...]"""
+        board = state.__board__()
+        print(board)
+
+        actions = []
+        # for i in range (len(board)):
+        #     for j in range (len(board)):
+                # if (board[i][j] == 0):
+
+        return actions
+        
 
     def result(self, state: NumbrixState, action):
         """ Retorna o estado resultante de executar a 'action' sobre
@@ -137,11 +152,14 @@ class Numbrix(Problem):
 #                                             MAIN                                                #
 ###################################################################################################
 if __name__ == "__main__":
-    # TODO:
+
     # Ler o ficheiro de input de sys.argv[1],
     board = Board.parse_instance(sys.argv[1])
+    problem = Numbrix(board)
+    s0 = NumbrixState(board)
+
     print(Board.boardSize)
-    print(board)
+    print(Numbrix.actions(problem, s0))
 
     vertical_numbers = Board.adjacent_vertical_numbers(board, 2, 3)
     print(vertical_numbers)

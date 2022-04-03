@@ -107,21 +107,253 @@ class Board:
 class Numbrix(Problem):
     def __init__(self, board: Board):
         """ O construtor especifica o estado inicial. """
-        # TODO
-        pass
+        return NumbrixState.__init__(self, board)
 
     def actions(self, state: NumbrixState):
         """ Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento. 
         RETURN: [(linha, coluna, valor),(linha, coluna, valor),(linha, coluna, valor), ...]"""
         board = state.__board__()
+        print("\nBoard:")
         print(board)
-
+        possible_neighbors = []
         actions = []
-        # for i in range (len(board)):
-        #     for j in range (len(board)):
-                # if (board[i][j] == 0):
 
+        for i in range (len(board)):
+            for j in range (len(board)):
+                possible_neighbors = []
+                if int(board[i][j]) == 0:
+                    horiz_nei = list(Board.adjacent_horizontal_numbers(board, i+1, j+1))
+                    vert_nei = list(Board.adjacent_vertical_numbers(board, i+1, j+1))
+
+                    ######################################################## ESQUERDA ########################################################
+                    if horiz_nei[0] != None:
+                        # se for possivel seguir pela esquerda
+                        ## MAIS UM ##
+                        if int(horiz_nei[0])+1 == len(board)*len(board):
+                            # se o valor a colocar for o último
+                            if int(horiz_nei[0])+1 not in possible_neighbors:
+                                possible_neighbors.append(horiz_nei[0]+1)
+                        else:
+                            if (int(horiz_nei[0]+1) < len(board)*len(board)):
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela DIREITA
+                                if horiz_nei[1] != None:
+                                    if int(horiz_nei[1]) == 0 or int(horiz_nei[1]) == int(horiz_nei[0])+2:
+                                        if int(horiz_nei[0])+1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[0]+1)
+                                
+                                # para BAIXO
+                                if vert_nei[0] != None:
+                                    if int(vert_nei[0]) == 0 or int(vert_nei[0]) == int(horiz_nei[0])+2:
+                                        if int(horiz_nei[0])+1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[0]+1)
+                                    
+                                # para CIMA
+                                if vert_nei[1] != None:
+                                    if int(vert_nei[1]) == 0 or int(vert_nei[1]) == int(horiz_nei[0])+2:
+                                        if int(horiz_nei[0])+1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[0]+1)
+                        ## MENOS UM ##
+                        if int(horiz_nei[0])-1 == 1:
+                            # se o valor a colocar for o primeiro
+                            if int(horiz_nei[0])-1 not in possible_neighbors:
+                                possible_neighbors.append(horiz_nei[0]-1)
+                        else:
+                            if int(horiz_nei[0])-1 > 1:
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela DIREITA
+                                if horiz_nei[1] != None:
+                                    if int(horiz_nei[1]) == 0 or int(horiz_nei[1]) == int(horiz_nei[0])-2:
+                                        if int(horiz_nei[0])-1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[0]-1)
+                                
+                                # para BAIXO
+                                if vert_nei[0] != None:
+                                    if int(vert_nei[0]) == 0 or int(vert_nei[0]) == int(horiz_nei[0])-2:
+                                        if int(horiz_nei[0])-1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[0]-1)
+                                    
+                                # para CIMA
+                                if vert_nei[1] != None:
+                                    if int(vert_nei[1]) == 0 or int(vert_nei[1]) == int(horiz_nei[0])-2:
+                                        if int(horiz_nei[0])-1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[0]-1)
+                    ##########################################################################################################################
+
+                    ######################################################## DIREITA #########################################################
+                    if horiz_nei[1] != None:
+                        # se for possivel seguir pela direita
+                        ## MAIS UM ##
+                        if int(horiz_nei[1])+1 == len(board)*len(board):
+                            # se o valor a colocar for o último
+                            if int(horiz_nei[1])+1 not in possible_neighbors:
+                                possible_neighbors.append(horiz_nei[1]+1)
+                        else:
+                            if int(horiz_nei[1])+1 < len(board)*len(board):
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela ESQUERDA
+                                if horiz_nei[0] != None:
+                                    if int(horiz_nei[0]) == 0 or int(horiz_nei[0]) == int(horiz_nei[1])+2:
+                                        if int(horiz_nei[1])+1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[1]+1)
+                                
+                                # para BAIXO
+                                if vert_nei[0] != None:
+                                    if int(vert_nei[0]) == 0 or int(vert_nei[0]) == int(horiz_nei[1])+2:
+                                        if int(horiz_nei[1])+1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[1]+1)
+                                    
+                                # para CIMA
+                                if vert_nei[1] != None:
+                                    if int(vert_nei[1]) == 0 or int(vert_nei[1]) == int(horiz_nei[1])+2:
+                                        if int(horiz_nei[1])+1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[1]+1)
+                        ## MENOS UM ##
+                        if int(horiz_nei[1])-1 == 1:
+                            # se o valor a colocar for o primeiro
+                            if int(horiz_nei[1])-1 not in possible_neighbors:
+                                possible_neighbors.append(horiz_nei[1]-1)
+                        else:
+                            if int(horiz_nei[1])-1 > 1:
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela ESQUERDA
+                                if horiz_nei[0] != None:
+                                    if int(horiz_nei[0]) == 0 or int(horiz_nei[0]) == int(horiz_nei[1])-2:
+                                        if int(horiz_nei[1])-1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[1]-1)
+                                
+                                # para BAIXO
+                                if vert_nei[0] != None:
+                                    if int(vert_nei[0]) == 0 or int(vert_nei[0]) == int(horiz_nei[1])-2:
+                                        if int(horiz_nei[1])-1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[1]-1)
+                                    
+                                # para CIMA
+                                if vert_nei[1] != None:
+                                    if int(vert_nei[1]) == 0 or int(vert_nei[1]) == int(horiz_nei[1])-2:
+                                        if int(horiz_nei[1])-1 not in possible_neighbors:
+                                            possible_neighbors.append(horiz_nei[1]-1)
+                    ##########################################################################################################################
+
+                    ######################################################### BAIXO ##########################################################
+                    if vert_nei[0] != None:
+                        # se for possivel seguir para baixo
+                        ## MAIS UM ##
+                        if int(vert_nei[0])+1 == len(board)*len(board):
+                            # se o valor a colocar for o último
+                            if int(vert_nei[0])+1 not in possible_neighbors:
+                                possible_neighbors.append(vert_nei[0]+1)
+                        else:
+                            if int(vert_nei[0])+1 < len(board)*len(board):
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela ESQUERDA
+                                if horiz_nei[0] != None:
+                                    if int(horiz_nei[0]) == 0 or int(horiz_nei[0]) == int(vert_nei[0])+2:
+                                        if int(vert_nei[0])+1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[0]+1)
+                                
+                                # pela DIREITA
+                                if horiz_nei[1] != None:
+                                    if int(horiz_nei[1]) == 0 or int(horiz_nei[1]) == int(vert_nei[0])+2:
+                                        if int(vert_nei[0])+1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[0]+1)
+                                    
+                                # para CIMA
+                                if vert_nei[1] != None:
+                                    if int(vert_nei[1]) == 0 or int(vert_nei[1]) == int(vert_nei[0])+2:
+                                        if int(vert_nei[0])+1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[0]+1)
+                        ## MENOS UM ##
+                        if int(vert_nei[0])-1 == 1:
+                            # se o valor a colocar for o primeiro
+                            if int(vert_nei[0])-1 not in possible_neighbors:
+                                possible_neighbors.append(vert_nei[0]-1)
+                        else:
+                            if int(vert_nei[0])-1 > 1:
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela ESQUERDA
+                                if horiz_nei[0] != None:
+                                    if int(horiz_nei[0]) == 0 or int(horiz_nei[0]) == int(vert_nei[0])-2:
+                                        if int(vert_nei[0])-1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[0]-1)
+                                
+                                # pela DIREITA
+                                if horiz_nei[1] != None:
+                                    if int(horiz_nei[1]) == 0 or int(horiz_nei[1]) == int(vert_nei[0])-2:
+                                        if int(vert_nei[0])-1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[0]-1)
+                                    
+                                # para CIMA
+                                if vert_nei[1] != None:
+                                    if int(vert_nei[1]) == 0 or int(vert_nei[1]) == int(vert_nei[0])-2:
+                                        if int(vert_nei[0])-1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[0]-1)
+                    ##########################################################################################################################
+
+                    ########################################################## CIMA ##########################################################
+                    if vert_nei[1] != None:
+                        # se for possivel seguir para baixo
+                        ## MAIS UM ##
+                        if int(vert_nei[1])+1 == len(board)*len(board):
+                            # se o valor a colocar for o último
+                            if int(vert_nei[1])+1 not in possible_neighbors:
+                                possible_neighbors.append(vert_nei[1]+1)
+                        else:
+                            if int(vert_nei[1])+1 < len(board)*len(board):
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela ESQUERDA
+                                if horiz_nei[0] != None:
+                                    if int(horiz_nei[0]) == 0 or int(horiz_nei[0]) == int(vert_nei[1])+2:
+                                        if int(vert_nei[1])+1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[1]+1)
+                                
+                                # pela DIREITA
+                                if horiz_nei[1] != None:
+                                    if int(horiz_nei[1]) == 0 or int(horiz_nei[1]) == int(vert_nei[1])+2:
+                                        if int(vert_nei[1])+1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[1]+1)
+                                    
+                                # para BAIXO
+                                if vert_nei[0] != None:
+                                    if int(vert_nei[0]) == 0 or int(vert_nei[0]) == int(vert_nei[1])+2:
+                                        if int(vert_nei[1])+1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[1]+1)
+                        ## MENOS UM ##
+                        if int(vert_nei[1])-1 == 1:
+                            # se o valor a colocar for o primeiro
+                            if int(vert_nei[1])-1 not in possible_neighbors:
+                                possible_neighbors.append(vert_nei[1]-1)
+                        else:
+                            if int(vert_nei[1])-1 > 1:
+                                # caso não seja devo verificar se terá continuação possivel
+                                # pela ESQUERDA
+                                if horiz_nei[0] != None:
+                                    if int(horiz_nei[0]) == 0 or int(horiz_nei[0]) == int(vert_nei[1])-2:
+                                        if int(vert_nei[1])-1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[1]-1)
+                                
+                                # pela DIREITA
+                                if horiz_nei[1] != None:
+                                    if int(horiz_nei[1]) == 0 or int(horiz_nei[1]) == int(vert_nei[1])-2:
+                                        if int(vert_nei[1])-1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[1]-1)
+                                    
+                                # para BAIXO
+                                if vert_nei[0] != None:
+                                    if int(vert_nei[0]) == 0 or int(vert_nei[0]) == int(vert_nei[1])-2:
+                                        if int(vert_nei[1])-1 not in possible_neighbors:
+                                            possible_neighbors.append(vert_nei[1]-1)
+                    ##########################################################################################################################
+                    
+                    # print((i+1,j+1))
+                    # print(possible_neighbors)
+                    possible_actions = Numbrix.optimize_actions(self, board, possible_neighbors)
+                    # print(possible_actions)
+                    for x in possible_actions:
+                        actions.append((i+1,j+1,x))
+        print("\nActions:")
+        print(actions)
         return actions
         
 
@@ -145,7 +377,14 @@ class Numbrix(Problem):
         # TODO
         pass
     
-    # TODO: outros metodos da classe
+    def optimize_actions(self, board: Board, actions: list):
+        
+        for i in range (len(board)):
+            for j in range (len(board)):
+                if int(board[i][j]) in actions:
+                    actions.remove(int(board[i][j]))
+        
+        return actions
 
 
 ###################################################################################################
@@ -158,14 +397,15 @@ if __name__ == "__main__":
     problem = Numbrix(board)
     s0 = NumbrixState(board)
 
-    print(Board.boardSize)
-    print(Numbrix.actions(problem, s0))
+    print("size: " + str(Board.boardSize))
+    Numbrix.actions(problem, s0)
+    board[0][2]=3
+    problem2 = Numbrix(board)
+    Numbrix.actions(problem2, s0)
+    board[0][1]=2
+    problem3 = Numbrix(board)
+    Numbrix.actions(problem3, s0)
 
-    vertical_numbers = Board.adjacent_vertical_numbers(board, 2, 3)
-    print(vertical_numbers)
-
-    horizontal_numbers = Board.adjacent_horizontal_numbers(board, 3, 3)
-    print(horizontal_numbers)
     # Usar uma técnica de procura para resolver a instância,
 
     # Retirar a solução a partir do nó resultante,

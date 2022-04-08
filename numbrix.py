@@ -116,6 +116,7 @@ class Numbrix(Problem):
         board = state.__board__()
         print("\nBoard:")
         print(board)
+        not_unique = True
         possible_neighbors = []
         actions = []
 
@@ -123,11 +124,26 @@ class Numbrix(Problem):
             for j in range (len(board)):
                 possible_neighbors = []
                 if int(board[i][j]) == 0:
+                    not_unique = True
                     horiz_nei = list(Board.adjacent_horizontal_numbers(board, i+1, j+1))
                     vert_nei = list(Board.adjacent_vertical_numbers(board, i+1, j+1))
+                    if horiz_nei[0] != None and horiz_nei[1] != None:
+                        if horiz_nei[1] == horiz_nei[0]+2:
+                            possible_neighbors.append(horiz_nei[0]+1)
+                            not_unique = False
+                        if horiz_nei[1] == horiz_nei[0]-2:
+                            possible_neighbors.append(horiz_nei[0]-1)
+                            not_unique = False
+                    if vert_nei[0] != None and vert_nei[1] != None:
+                        if vert_nei[1] == vert_nei[0]+2:
+                            possible_neighbors.append(vert_nei[0]+1)
+                            not_unique = False
+                        if vert_nei[1] == vert_nei[0]-2:
+                            possible_neighbors.append(vert_nei[0]-1)
+                            not_unique = False
 
                     ######################################################## ESQUERDA ########################################################
-                    if horiz_nei[0] != None:
+                    if horiz_nei[0] != None and not_unique:
                         # se for possivel seguir pela esquerda
                         ## MAIS UM ##
                         if int(horiz_nei[0])+1 == len(board)*len(board):
@@ -182,7 +198,7 @@ class Numbrix(Problem):
                     ##########################################################################################################################
 
                     ######################################################## DIREITA #########################################################
-                    if horiz_nei[1] != None:
+                    if horiz_nei[1] != None and not_unique:
                         # se for possivel seguir pela direita
                         ## MAIS UM ##
                         if int(horiz_nei[1])+1 == len(board)*len(board):
@@ -237,7 +253,7 @@ class Numbrix(Problem):
                     ##########################################################################################################################
 
                     ######################################################### BAIXO ##########################################################
-                    if vert_nei[0] != None:
+                    if vert_nei[0] != None and not_unique:
                         # se for possivel seguir para baixo
                         ## MAIS UM ##
                         if int(vert_nei[0])+1 == len(board)*len(board):
@@ -292,7 +308,7 @@ class Numbrix(Problem):
                     ##########################################################################################################################
 
                     ########################################################## CIMA ##########################################################
-                    if vert_nei[1] != None:
+                    if vert_nei[1] != None and not_unique:
                         # se for possivel seguir para baixo
                         ## MAIS UM ##
                         if int(vert_nei[1])+1 == len(board)*len(board):
@@ -345,32 +361,59 @@ class Numbrix(Problem):
                                         if int(vert_nei[1])-1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[1]-1)
                     ##########################################################################################################################
-                    
-                    # print((i+1,j+1))
-                    # print(possible_neighbors)
+
                     possible_actions = Numbrix.optimize_actions(self, board, possible_neighbors)
-                    # print(possible_actions)
                     for x in possible_actions:
                         actions.append((i+1,j+1,x))
         print("\nActions:")
         print(actions)
         return actions
+
+    def select_next_action(self, actions, size):
+        selected_action = ()
+        # conta o número de ações para determinado valor
+        freq = [0] * size
+        for action in actions:
+            freq[action[2]-1]+=1
         
+        for i in range (len(freq)):
+            if freq[i] != 0:
+                current_min = freq[i]
+                break;
+        
+        # retorna o index da action do valor com menos frequência
+        for i in range (len(freq)):
+            if freq[i] != 0 and freq[i] <= current_min:
+                index = i
+
+        for action in actions:
+            if action[2] == index+1:
+                selected_action = action
+
+        return selected_action
+
 
     def result(self, state: NumbrixState, action):
         """ Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de 
         self.actions(state). """
-        # TODO
-        pass
+        if action != ():
+            row = action[0]
+            col = action[1]
+            nmbr = action[2]
+            state.board[row-1][col-1]=nmbr
 
     def goal_test(self, state: NumbrixState):
         """ Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro 
         estão preenchidas com uma sequência de números adjacentes. """
-        # TODO
-        pass
+        for i in range (len(state.board)):
+            for j in range (len(state.board)):
+                if int(state.board[i][j]) == 0:
+                    return False
+        return True
+
 
     def h(self, node: Node):
         """ Função heuristica utilizada para a procura A*. """
@@ -396,16 +439,8 @@ if __name__ == "__main__":
     board = Board.parse_instance(sys.argv[1])
     problem = Numbrix(board)
     s0 = NumbrixState(board)
-
-    print("size: " + str(Board.boardSize))
-    Numbrix.actions(problem, s0)
-    board[0][2]=3
-    problem2 = Numbrix(board)
-    Numbrix.actions(problem2, s0)
-    board[0][1]=2
-    problem3 = Numbrix(board)
-    Numbrix.actions(problem3, s0)
-
+    
+    actions = Numbrix.actions(problem, s0)
     # Usar uma técnica de procura para resolver a instância,
 
     # Retirar a solução a partir do nó resultante,

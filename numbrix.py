@@ -6,7 +6,9 @@
 # 84721 Gonçalo Cruz
 # 98789 António Cunha
 
+import copy
 import sys
+
 from search import Problem, Node, astar_search, breadth_first_tree_search, depth_first_tree_search, greedy_search, recursive_best_first_search
 
 ###################################################################################################
@@ -22,9 +24,6 @@ class NumbrixState:
 
     def __lt__(self, other):
         return self.id < other.id
-    
-    def __board__(self):
-        return self.board
         
     # TODO: outros metodos da classe
 
@@ -34,72 +33,80 @@ class NumbrixState:
 ###################################################################################################
 class Board:
     boardSize = 0
+    board = []
     """ Representação interna de um tabuleiro de Numbrix. """
     
     def get_number(self, row: int, col: int) -> int:
         """ Devolve o valor na respetiva posição do tabuleiro. """
-        return self[Board.findRow(row)][Board.findColumn(col)]
+        return self.board[self.findRow(row)][self.findColumn(col)]
     
     def adjacent_vertical_numbers(self, row: int, col: int):
         """ Devolve os valores imediatamente abaixo e acima, 
         respectivamente. """
         if (row-1 >= 1):
-            if(row+1 <= Board.boardSize):
+            if(row+1 <= self.boardSize):
                 """ Se tiver casa imediatamente abaixo e acima
                 Return: ([linha+1][coluna], [linha-1][coluna]) """
-                return (int(Board.get_number(self,row+1, col)), int(Board.get_number(self, row-1, col)))
+                return (int(self.get_number(row+1, col)), int(self.get_number(row-1, col)))
             else:
                 """ Se tiver apenas casa imediatamente acima
                 Return: (None, [linha-1][coluna]) """
-                return (None, int(Board.get_number(self, row-1, col)))
+                return (None, int(self.get_number(row-1, col)))
         else:
-            if(row+1 <= Board.boardSize):
+            if(row+1 <= self.boardSize):
                 """ Se tiver apenas casa imediatamente abaixo
                 Return: ([linha+1][coluna], None) """
-                return (int(Board.get_number(self,row+1, col)), None)
+                return (int(self.get_number(row+1, col)), None)
     
     def adjacent_horizontal_numbers(self, row: int, col: int):
         """ Devolve os valores imediatamente à esquerda e à direita, 
         respectivamente. """
         if (col-1 >= 1):
-            if(col+1 <= Board.boardSize):
+            if(col+1 <= self.boardSize):
                 """ Se tiver casa imediatamente à esquerda e à direita
                 Return: ([linha][coluna-1], [linha][coluna+1]) """
-                return (int(Board.get_number(self,row, col-1)), int(Board.get_number(self,row, col+1)))
+                return (int(self.get_number(row, col-1)), int(self.get_number(row, col+1)))
             else:
                 """ Se tiver apenas casa imediatamente à esquerda
                 Return: ([linha][coluna-1], None) """
-                return (int(Board.get_number(self,row, col-1)), None)
+                return (int(self.get_number(row, col-1)), None)
         else:
-            if(col <= Board.boardSize):
+            if(col <= self.boardSize):
                 """ Se tiver apenas casa imediatamente à direita
                 Return: (None, [linha][coluna+1]) """
-                return (None, int(Board.get_number(self,row, col+1)))
+                return (None, int(self.get_number(row, col+1)))
     
     @staticmethod    
     def parse_instance(filename: str):
         """ Lê o ficheiro cujo caminho é passado como argumento e retorna
         uma instância da classe Board. """
+        boardClass = Board()
         board = []
         with open(filename, "r") as f:
             # index 0 --> N
-            Board.boardSize = int(f.readline())
+            boardClass.boardSize = int(f.readline())
             for line in f:
-                row = [column.strip() for column in line.split('\t')]
+                row = [int(column.strip()) for column in line.split('\t')]
                 board.append(row)
-                    
-        return board
+        boardClass.board = board
+        return boardClass
 
-    def findRow(row: int):
+    def findRow(self, row: int):
         """ devolve o valor do index da linha """
         return row-1
     
-    def findColumn(col: int):
+    def findColumn(self, col: int):
         """ devolve o valor do index da coluna """
         return col-1
 
     def __size__():
         return Board.boardSize
+
+    def initializeBoard (self, boardL: list):
+        self.board = copy.deepcopy(boardL)
+        self.boardSize = len(boardL)
+        
+
 
 ###################################################################################################
 #                                            NUMBRIX                                              #
@@ -113,7 +120,7 @@ class Numbrix(Problem):
         """ Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento. 
         RETURN: [(linha, coluna, valor),(linha, coluna, valor),(linha, coluna, valor), ...]"""
-        board = state.__board__()
+        board = state.board.board
         print("\nBoard:")
         print(board)
         not_unique = True
@@ -125,8 +132,8 @@ class Numbrix(Problem):
                 possible_neighbors = []
                 if int(board[i][j]) == 0:
                     not_unique = True
-                    horiz_nei = list(Board.adjacent_horizontal_numbers(board, i+1, j+1))
-                    vert_nei = list(Board.adjacent_vertical_numbers(board, i+1, j+1))
+                    horiz_nei = list(state.board.adjacent_horizontal_numbers(i+1, j+1))
+                    vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
                     if horiz_nei[0] != None and horiz_nei[1] != None:
                         if horiz_nei[1] == horiz_nei[0]+2:
                             possible_neighbors.append(horiz_nei[0]+1)
@@ -398,11 +405,16 @@ class Numbrix(Problem):
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de 
         self.actions(state). """
+        boardAux = Board()
+        boardAux.initializeBoard(state.board.board)
+        new_state = NumbrixState(boardAux)
         if action != ():
             row = action[0]
             col = action[1]
             nmbr = action[2]
-            state.board[row-1][col-1]=nmbr
+            print(new_state.board)
+            new_state.board.board[row-1][col-1] = nmbr
+        return new_state
 
     def goal_test(self, state: NumbrixState):
         """ Retorna True se e só se o estado passado como argumento é
@@ -437,12 +449,18 @@ if __name__ == "__main__":
 
     # Ler o ficheiro de input de sys.argv[1],
     board = Board.parse_instance(sys.argv[1])
-    problem = Numbrix(board)
-    s0 = NumbrixState(board)
+    problem = Numbrix(board.board)
+    initial_state = NumbrixState(board)
+    result_state = problem.result(initial_state, (1, 2, 2))
+    print(initial_state.board.board)
+
+    print(result_state.board.board)
+    print(result_state.board.get_number(2, 2))
+    actions = Numbrix.actions(problem, result_state)
     
-    actions = Numbrix.actions(problem, s0)
     # Usar uma técnica de procura para resolver a instância,
 
     # Retirar a solução a partir do nó resultante,
+
     # Imprimir para o standard output no formato indicado.
     pass

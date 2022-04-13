@@ -121,8 +121,7 @@ class Numbrix(Problem):
         partir do estado passado como argumento. 
         RETURN: [(linha, coluna, valor),(linha, coluna, valor),(linha, coluna, valor), ...]"""
         board = state.board.board
-        print("\nBoard:")
-        print(board)
+        print("\nBoard:\n", board)
         not_unique = True
         possible_neighbors = []
         actions = []
@@ -372,8 +371,7 @@ class Numbrix(Problem):
                     possible_actions = Numbrix.optimize_actions(self, board, possible_neighbors)
                     for x in possible_actions:
                         actions.append((i+1,j+1,x))
-        print("\nActions:")
-        print(actions)
+        print("\nActions:\n", actions)
         return actions
 
     def select_next_action(self, actions, size):
@@ -412,7 +410,6 @@ class Numbrix(Problem):
             row = action[0]
             col = action[1]
             nmbr = action[2]
-            print(new_state.board)
             new_state.board.board[row-1][col-1] = nmbr
         return new_state
 
@@ -451,11 +448,8 @@ if __name__ == "__main__":
     board = Board.parse_instance(sys.argv[1])
     problem = Numbrix(board.board)
     initial_state = NumbrixState(board)
+    actions = Numbrix.actions(problem, initial_state)
     result_state = problem.result(initial_state, (1, 2, 2))
-    print(initial_state.board.board)
-
-    print(result_state.board.board)
-    print(result_state.board.get_number(2, 2))
     actions = Numbrix.actions(problem, result_state)
     
     # Usar uma técnica de procura para resolver a instância,

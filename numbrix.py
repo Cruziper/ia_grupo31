@@ -105,7 +105,17 @@ class Board:
     def initializeBoard (self, boardL: list):
         self.board = copy.deepcopy(boardL)
         self.boardSize = len(boardL)
-        
+    
+    def to_string(self):
+        board_str=""
+        for i in range (len(self.board)):
+            for j in range (len(self.board)):
+                board_str += str(self.board[i][j])
+                if j < len(self.board)-1:
+                    board_str += " "
+            if i < len(self.board)-1:
+                board_str += "\n"
+        return board_str
 
 
 ###################################################################################################
@@ -410,16 +420,16 @@ class Numbrix(Problem):
             row = action[0]
             col = action[1]
             nmbr = action[2]
-            new_state.board.board[row-1][col-1] = nmbr
+            new_state.board.board[row][col] = nmbr
         return new_state
 
     def goal_test(self, state: NumbrixState):
         """ Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro 
         estão preenchidas com uma sequência de números adjacentes. """
-        for i in range (len(state.board)):
-            for j in range (len(state.board)):
-                if int(state.board[i][j]) == 0:
+        for i in range (len(state.board.board)):
+            for j in range (len(state.board.board)):
+                if int(state.board.board[i][j]) == 0:
                     return False
         return True
 
@@ -446,11 +456,21 @@ if __name__ == "__main__":
 
     # Ler o ficheiro de input de sys.argv[1],
     board = Board.parse_instance(sys.argv[1])
-    problem = Numbrix(board.board)
-    initial_state = NumbrixState(board)
-    actions = Numbrix.actions(problem, initial_state)
-    result_state = problem.result(initial_state, (1, 2, 2))
-    actions = Numbrix.actions(problem, result_state)
+    problem = Numbrix(board)
+    s0 = NumbrixState(board)
+    print("Initial:\n", s0.board.to_string(), sep="")
+    s1 = problem.result(s0, (2, 2, 1))
+    s2 = problem.result(s1, (0, 2, 3))
+    s3 = problem.result(s2, (0, 1, 4))
+    s4 = problem.result(s3, (1, 1, 5))
+    s5 = problem.result(s4, (2, 0, 7))
+    s6 = problem.result(s5, (1, 0, 8))
+    s7 = problem.result(s6, (0, 0, 9))
+
+    print("Is goal?", problem.goal_test(s7))
+    print("Solution:\n", s7.board.to_string(), sep="")
+
+
     
     # Usar uma técnica de procura para resolver a instância,
 

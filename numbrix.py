@@ -124,7 +124,7 @@ class Board:
 class Numbrix(Problem):
     def __init__(self, board: Board):
         """ O construtor especifica o estado inicial. """
-        return NumbrixState.__init__(self, board)
+        self.initial = NumbrixState(board)
 
     def actions(self, state: NumbrixState):
         """ Retorna uma lista de ações que podem ser executadas a
@@ -420,7 +420,7 @@ class Numbrix(Problem):
             row = action[0]
             col = action[1]
             nmbr = action[2]
-            new_state.board.board[row][col] = nmbr
+            new_state.board.board[row-1][col-1] = nmbr
         return new_state
 
     def goal_test(self, state: NumbrixState):
@@ -457,24 +457,41 @@ if __name__ == "__main__":
     # Ler o ficheiro de input de sys.argv[1],
     board = Board.parse_instance(sys.argv[1])
     problem = Numbrix(board)
-    s0 = NumbrixState(board)
-    print("Initial:\n", s0.board.to_string(), sep="")
-    s1 = problem.result(s0, (2, 2, 1))
-    s2 = problem.result(s1, (0, 2, 3))
-    s3 = problem.result(s2, (0, 1, 4))
-    s4 = problem.result(s3, (1, 1, 5))
-    s5 = problem.result(s4, (2, 0, 7))
-    s6 = problem.result(s5, (1, 0, 8))
-    s7 = problem.result(s6, (0, 0, 9))
 
-    print("Is goal?", problem.goal_test(s7))
-    print("Solution:\n", s7.board.to_string(), sep="")
-
-
-    
     # Usar uma técnica de procura para resolver a instância,
+    goal_node = breadth_first_tree_search(problem)
 
     # Retirar a solução a partir do nó resultante,
 
     # Imprimir para o standard output no formato indicado.
+    print("Solution:\n", goal_node.state.board.to_string(), sep="")
+
+    ### Exemplo 3 ###
+    # board = Board.parse_instance(sys.argv[1])
+    
+    # problem = Numbrix(board)
+
+    # s0 = NumbrixState(board)
+    # print("Initial:\n", s0.board.to_string(), sep="")
+
+    # s1 = problem.result(s0, (2, 2, 1))
+    # s2 = problem.result(s1, (0, 2, 3))
+    # s3 = problem.result(s2, (0, 1, 4))
+    # s4 = problem.result(s3, (1, 1, 5))
+    # s5 = problem.result(s4, (2, 0, 7))
+    # s6 = problem.result(s5, (1, 0, 8))
+    # s7 = problem.result(s6, (0, 0, 9))
+
+    # print("Is goal?", problem.goal_test(s7))
+    # print("Solution:\n", s7.board.to_string(), sep="")
+
+    ### Exemplo 4 ###
+    # board = Board.parse_instance(sys.argv[1])
+
+    # problem = Numbrix(board)
+
+    # goal_node = astar_search(problem)
+
+    # print("Is goal?", problem.goal_test(goal_node.state))
+    # print("Solution:\n", goal_node.state.board.to_string(), sep="")
     pass

@@ -122,6 +122,7 @@ class Board:
 #                                            NUMBRIX                                              #
 ###################################################################################################
 class Numbrix(Problem):
+    uni_actions = []
     def __init__(self, board: Board):
         """ O construtor especifica o estado inicial. """
         self.initial = NumbrixState(board)
@@ -131,23 +132,315 @@ class Numbrix(Problem):
         partir do estado passado como argumento. 
         RETURN: [(linha, coluna, valor),(linha, coluna, valor),(linha, coluna, valor), ...]"""
         board = state.board.board
-        print("\nBoard:\n", state.board.to_string())
-        numbers = [0]*len(board)*len(board)
-        print(numbers)
+        # print("\nBoard:\n", state.board.to_string())
         actions = []
 
         for i in range (len(board)):
             for j in range (len(board)):
-                if board[i][j] != 0:
-                    numbers[board[i][j]-1] = board[i][j]
-        
-        # for i in range (len(board)):
-        #     for j in range (len(board)):
-        #         if 
-        print(numbers)
-               
+                if self.anyblocked(state):
+                    return []
+                else:
+                    possible_neighbors = []
+                    if int(board[i][j]) == 0:
+                        not_unique = True
+                        horiz_nei = list(state.board.adjacent_horizontal_numbers(i+1, j+1))
+                        vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
+                        if horiz_nei[0] != None and horiz_nei[1] != None:
+                            if horiz_nei[1] == horiz_nei[0]+2:
+                                possible_neighbors.append(horiz_nei[0]+1)
+                                not_unique = False
+                            if horiz_nei[1] == horiz_nei[0]-2:
+                                possible_neighbors.append(horiz_nei[0]-1)
+                                not_unique = False
+                        if vert_nei[0] != None and vert_nei[1] != None:
+                            if vert_nei[1] == vert_nei[0]+2:
+                                possible_neighbors.append(vert_nei[0]+1)
+                                not_unique = False
+                            if vert_nei[1] == vert_nei[0]-2:
+                                possible_neighbors.append(vert_nei[0]-1)
+                                not_unique = False
+
+                        ######################################################## ESQUERDA ########################################################
+                        if horiz_nei[0] != None and not_unique:
+                            # se for possivel seguir pela esquerda
+                            ## MAIS UM ##
+                            if horiz_nei[0]+1 == len(board)*len(board):
+                                # se o valor a colocar for o último
+                                if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j):
+                                    possible_neighbors.append(horiz_nei[0]+1)
+                            else:
+                                if horiz_nei[0]+1 < len(board)*len(board) and horiz_nei[0]+1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela DIREITA
+                                    if horiz_nei[1] != None:
+                                        if horiz_nei[1] == 0 or horiz_nei[1] == horiz_nei[0]+2:
+                                            if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j):
+                                                possible_neighbors.append(horiz_nei[0]+1)
+                                    
+                                    # para BAIXO
+                                    if vert_nei[0] != None:
+                                        if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[0]+2:
+                                            if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j):
+                                                possible_neighbors.append(horiz_nei[0]+1)
+                                        
+                                    # para CIMA
+                                    if vert_nei[1] != None:
+                                        if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[0]+2:
+                                            if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j):
+                                                possible_neighbors.append(horiz_nei[0]+1)
+                            ## MENOS UM ##
+                            if horiz_nei[0]-1 == 1:
+                                # se o valor a colocar for o primeiro
+                                if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j):
+                                    possible_neighbors.append(horiz_nei[0]-1)
+                            else:
+                                if horiz_nei[0]-1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela DIREITA
+                                    if horiz_nei[1] != None:
+                                        if horiz_nei[1] == 0 or horiz_nei[1] == horiz_nei[0]-2:
+                                            if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j):
+                                                possible_neighbors.append(horiz_nei[0]-1)
+                                    
+                                    # para BAIXO
+                                    if vert_nei[0] != None:
+                                        if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[0]-2:
+                                            if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j):
+                                                possible_neighbors.append(horiz_nei[0]-1)
+                                        
+                                    # para CIMA
+                                    if vert_nei[1] != None:
+                                        if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[0]-2:
+                                            if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j):
+                                                possible_neighbors.append(horiz_nei[0]-1)
+                        ##########################################################################################################################
+
+                        ######################################################## DIREITA #########################################################
+                        if horiz_nei[1] != None and not_unique:
+                            # se for possivel seguir pela direita
+                            ## MAIS UM ##
+                            if horiz_nei[1]+1 == len(board)*len(board):
+                                # se o valor a colocar for o último
+                                if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j):
+                                    possible_neighbors.append(horiz_nei[1]+1)
+                            else:
+                                if horiz_nei[1]+1 < len(board)*len(board) and horiz_nei[1]+1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela ESQUERDA
+                                    if horiz_nei[0] != None:
+                                        if horiz_nei[0] == 0 or horiz_nei[0] == horiz_nei[1]+2:
+                                            if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j):
+                                                possible_neighbors.append(horiz_nei[1]+1)
+                                    
+                                    # para BAIXO
+                                    if vert_nei[0] != None:
+                                        if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[1]+2:
+                                            if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j):
+                                                possible_neighbors.append(horiz_nei[1]+1)
+                                        
+                                    # para CIMA
+                                    if vert_nei[1] != None:
+                                        if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[1]+2:
+                                            if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j):
+                                                possible_neighbors.append(horiz_nei[1]+1)
+                            ## MENOS UM ##
+                            if horiz_nei[1]-1 == 1:
+                                # se o valor a colocar for o primeiro
+                                if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j):
+                                    possible_neighbors.append(horiz_nei[1]-1)
+                            else:
+                                if horiz_nei[1]-1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela ESQUERDA
+                                    if horiz_nei[0] != None:
+                                        if horiz_nei[0] == 0 or horiz_nei[0] == horiz_nei[1]-2:
+                                            if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j):
+                                                possible_neighbors.append(horiz_nei[1]-1)
+                                    
+                                    # para BAIXO
+                                    if vert_nei[0] != None:
+                                        if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[1]-2:
+                                            if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j):
+                                                possible_neighbors.append(horiz_nei[1]-1)
+                                        
+                                    # para CIMA
+                                    if vert_nei[1] != None:
+                                        if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[1]-2:
+                                            if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j):
+                                                possible_neighbors.append(horiz_nei[1]-1)
+                        ##########################################################################################################################
+
+                        ######################################################### BAIXO ##########################################################
+                        if vert_nei[0] != None and not_unique:
+                            # se for possivel seguir para baixo
+                            ## MAIS UM ##
+                            if vert_nei[0]+1 == len(board)*len(board):
+                                # se o valor a colocar for o último
+                                if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j):
+                                    possible_neighbors.append(vert_nei[0]+1)
+                            else:
+                                if vert_nei[0]+1 < len(board)*len(board) and vert_nei[0]+1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela ESQUERDA
+                                    if horiz_nei[0] != None:
+                                        if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[0]+2:
+                                            if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j):
+                                                possible_neighbors.append(vert_nei[0]+1)
+                                    
+                                    # pela DIREITA
+                                    if horiz_nei[1] != None:
+                                        if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[0]+2:
+                                            if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j):
+                                                possible_neighbors.append(vert_nei[0]+1)
+                                        
+                                    # para CIMA
+                                    if vert_nei[1] != None:
+                                        if vert_nei[1] == 0 or vert_nei[1] == vert_nei[0]+2:
+                                            if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j):
+                                                possible_neighbors.append(vert_nei[0]+1)
+                            ## MENOS UM ##
+                            if vert_nei[0]-1 == 1:
+                                # se o valor a colocar for o primeiro
+                                if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j):
+                                    possible_neighbors.append(vert_nei[0]-1)
+                            else:
+                                if vert_nei[0]-1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela ESQUERDA
+                                    if horiz_nei[0] != None:
+                                        if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[0]-2:
+                                            if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j):
+                                                possible_neighbors.append(vert_nei[0]-1)
+                                    
+                                    # pela DIREITA
+                                    if horiz_nei[1] != None:
+                                        if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[0]-2:
+                                            if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j):
+                                                possible_neighbors.append(vert_nei[0]-1)
+                                        
+                                    # para CIMA
+                                    if vert_nei[1] != None:
+                                        if vert_nei[1] == 0 or vert_nei[1] == vert_nei[0]-2:
+                                            if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j):
+                                                possible_neighbors.append(vert_nei[0]-1)
+                        ##########################################################################################################################
+
+                        ########################################################## CIMA ##########################################################
+                        if vert_nei[1] != None and not_unique:
+                            # se for possivel seguir para baixo
+                            ## MAIS UM ##
+                            if vert_nei[1]+1 == len(board)*len(board):
+                                # se o valor a colocar for o último
+                                if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j):
+                                    possible_neighbors.append(vert_nei[1]+1)
+                            else:
+                                if vert_nei[1]+1 < len(board)*len(board) and vert_nei[1]+1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela ESQUERDA
+                                    if horiz_nei[0] != None:
+                                        if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[1]+2:
+                                            if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j):
+                                                possible_neighbors.append(vert_nei[1]+1)
+                                    
+                                    # pela DIREITA
+                                    if horiz_nei[1] != None:
+                                        if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[1]+2:
+                                            if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j):
+                                                possible_neighbors.append(vert_nei[1]+1)
+                                        
+                                    # para BAIXO
+                                    if vert_nei[0] != None:
+                                        if vert_nei[0] == 0 or vert_nei[0] == vert_nei[1]+2:
+                                            if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j):
+                                                possible_neighbors.append(vert_nei[1]+1)
+                            ## MENOS UM ##
+                            if vert_nei[1]-1 == 1:
+                                # se o valor a colocar for o primeiro
+                                if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j):
+                                    possible_neighbors.append(vert_nei[1]-1)
+                            else:
+                                if vert_nei[1]-1 > 1:
+                                    # caso não seja devo verificar se terá continuação possivel
+                                    # pela ESQUERDA
+                                    if horiz_nei[0] != None:
+                                        if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[1]-2:
+                                            if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j):
+                                                possible_neighbors.append(vert_nei[1]-1)
+                                    
+                                    # pela DIREITA
+                                    if horiz_nei[1] != None:
+                                        if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[1]-2:
+                                            if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j):
+                                                possible_neighbors.append(vert_nei[1]-1)
+                                        
+                                    # para BAIXO
+                                    if vert_nei[0] != None:
+                                        if vert_nei[0] == 0 or vert_nei[0] == vert_nei[1]-2:
+                                            if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j):
+                                                possible_neighbors.append(vert_nei[1]-1)
+                        ##########################################################################################################################
+
+                        possible_actions = Numbrix.optimize_actions(self, board, possible_neighbors)
+                        for x in possible_actions:
+                            actions.append((i+1,j+1,x))
         # print("\nActions:\n", actions)
+        self.uni_actions= actions
         return actions
+
+    def anyblocked(self, state: NumbrixState):
+        board = state.board.board
+        flag = True
+
+        for i in range (len(board)):
+            for j in range (len(board)):
+                current = board[i][j]
+                if flag == False:
+                    return True
+                if current != 0:
+                    horiz_nei = list(state.board.adjacent_horizontal_numbers(i+1, j+1))
+                    vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
+                    neighbors = (horiz_nei[0], horiz_nei[1], vert_nei[0], vert_nei[1])
+                    if current == 1:
+                        # nao tem anterior
+                        if current+1 not in neighbors and neighbors.count(0) < 1:
+                            flag = False
+                    if current == len(board)*len(board):
+                        # nao tem seguinte
+                        if current-1 not in neighbors and neighbors.count(0) < 1:
+                            flag = False
+                    else:
+                        if current+1 not in neighbors and current-1 not in neighbors and neighbors.count(0) < 2:
+                            flag = False
+                        if current+1 not in neighbors and current-1 in neighbors and neighbors.count(0) < 1:
+                            flag = False
+                        if current+1  in neighbors and current-1 not in neighbors and neighbors.count(0) < 1:
+                            flag = False
+        if flag == False:
+            return True
+        return False
+
+    def get_manhattan_distance(self, pos1X: int, pos1Y: int, pos2X: int, pos2Y: int):
+        """ Recebe como input a posição duas posições e calcula a distancia
+        de manhattan até à mesma"""
+        return int(abs(pos1X-pos2X)+abs(pos1Y-pos2Y))
+        
+    def get_coordinates(state: NumbrixState, num:int):
+        for i in  range (len(state.board.board)):
+            for j in range(len(state.board.board)):
+                if num == state.board.board[i][j]:
+                    coord = (i,j)
+                    return coord
+        return False
+
+    def valid_manhattan(self, state: NumbrixState, num1:int, row: int, col: int):
+        for i in  range (len(state.board.board)):
+            for j in range(len(state.board.board)):
+                if state.board.board[i][j] != 0 and state.board.board[i][j] != num1:
+                    if self.get_manhattan_distance(row, col, i, j) > abs(num1-state.board.board[i][j]):
+                        # print("Manhattan for ", num1, " and ", state.board.board[i][j], " = FALSE")
+                        return False
+        # print("Manhattan for ", num1, " = TRUE")
+        return True
 
     def select_next_action(self, actions, size):
         selected_action = ()
@@ -171,7 +464,6 @@ class Numbrix(Problem):
                 selected_action = action
 
         return selected_action
-
 
     def result(self, state: NumbrixState, action):
         """ Retorna o estado resultante de executar a 'action' sobre
@@ -201,8 +493,11 @@ class Numbrix(Problem):
 
     def h(self, node: Node):
         """ Função heuristica utilizada para a procura A*. """
-        # TODO
-        pass
+        best_action = self.select_next_action(self.uni_actions, node.state.board.boardSize*node.state.board.boardSize)
+        if best_action == node.action:
+            return 1
+        else:
+            return 100
     
     def optimize_actions(self, board: Board, actions: list):
         
@@ -219,17 +514,17 @@ class Numbrix(Problem):
 ###################################################################################################
 if __name__ == "__main__":
 
-    # Ler o ficheiro de input de sys.argv[1],
-    board = Board.parse_instance(sys.argv[1])
-    problem = Numbrix(board)
+    # # Ler o ficheiro de input de sys.argv[1],
+    # board = Board.parse_instance(sys.argv[1])
+    # problem = Numbrix(board)
 
-    # Usar uma técnica de procura para resolver a instância,
-    goal_node = depth_first_tree_search(problem)
+    # # Usar uma técnica de procura para resolver a instância,
+    # goal_node = depth_first_tree_search(problem)
 
-    # Retirar a solução a partir do nó resultante,
+    # # Retirar a solução a partir do nó resultante,
 
-    # Imprimir para o standard output no formato indicado.
-    print("Solution:\n", goal_node.state.board.to_string(), sep="")
+    # # Imprimir para o standard output no formato indicado.
+    # print("Solution:\n", goal_node.state.board.to_string(), sep="")
 
     ### Exemplo 3 ###
     # board = Board.parse_instance(sys.argv[1])
@@ -251,12 +546,12 @@ if __name__ == "__main__":
     # print("Solution:\n", s7.board.to_string(), sep="")
 
     ### Exemplo 4 ###
-    # board = Board.parse_instance(sys.argv[1])
+    board = Board.parse_instance(sys.argv[1])
 
-    # problem = Numbrix(board)
+    problem = Numbrix(board)
 
-    # goal_node = astar_search(problem)
+    goal_node = astar_search(problem)
 
-    # print("Is goal?", problem.goal_test(goal_node.state))
-    # print("Solution:\n", goal_node.state.board.to_string(), sep="")
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board.to_string(), sep="")
     pass

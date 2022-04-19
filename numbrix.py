@@ -552,6 +552,5 @@ if __name__ == "__main__":
 
     goal_node = astar_search(problem)
 
-    print("Is goal?", problem.goal_test(goal_node.state))
-    print("Solution:\n", goal_node.state.board.to_string(), sep="")
+    print(goal_node.state.board.to_string(), sep="")
     pass

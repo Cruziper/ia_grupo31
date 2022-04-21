@@ -171,40 +171,42 @@ class Numbrix(Problem):
                             return [(i+1, j+1, vert_nei[0]-1)]
                     
                     if horiz_nei[0] != None and horiz_nei[0] != 0:
-                        if horiz_nei[0]+1 not in possible_neighbors:
+                        if horiz_nei[0]+1 <= len(board)*len(board) and horiz_nei[0]+1 not in possible_neighbors:
                             possible_neighbors.append(horiz_nei[0]+1)
-                        if horiz_nei[0]-1 not in possible_neighbors:
+                        if horiz_nei[0]-1 >= 1 and horiz_nei[0]-1 not in possible_neighbors:
                             possible_neighbors.append(horiz_nei[0]-1)
                     if horiz_nei[1] != None and horiz_nei[1] != 0:
-                        if horiz_nei[1]+1 not in possible_neighbors:
+                        if horiz_nei[1]+1 <= len(board)*len(board) and horiz_nei[1]+1 not in possible_neighbors:
                             possible_neighbors.append(horiz_nei[1]+1)
-                        if horiz_nei[1]-1 not in possible_neighbors:
+                        if horiz_nei[1]-1 >= 1 and horiz_nei[1]-1 not in possible_neighbors:
                             possible_neighbors.append(horiz_nei[1]-1)
                     if vert_nei[0] != None and vert_nei[0] != 0:
-                        if vert_nei[0]+1 not in possible_neighbors:
+                        if vert_nei[0]+1 <= len(board)*len(board) and vert_nei[0]+1 not in possible_neighbors:
                             possible_neighbors.append(vert_nei[0]+1)
-                        if vert_nei[0]-1 not in possible_neighbors:
+                        if vert_nei[0]-1 >= 1 and vert_nei[0]-1 not in possible_neighbors:
                             possible_neighbors.append(vert_nei[0]-1)
                     if vert_nei[1] != None and vert_nei[1] != 0:
-                        if vert_nei[1]+1 not in possible_neighbors:
+                        if vert_nei[1]+1 <= len(board)*len(board) and vert_nei[1]+1 not in possible_neighbors:
                             possible_neighbors.append(vert_nei[1]+1)
-                        if vert_nei[1]-1 not in possible_neighbors:
+                        if vert_nei[1]-1 >= 1 and  vert_nei[1]-1 not in possible_neighbors:
                             possible_neighbors.append(vert_nei[1]-1)
                     # print("possible_neighbors: ", possible_neighbors)
                     print("current_dom (before): ", current_dom)
                     to_remove = []
                     for elem in current_dom:
                         if elem not in possible_neighbors:
-                            if not self.valid_manhattan(state, elem, i, j) or not self.free_neighbors(state, elem, i, j):
-                                to_remove.append(elem)
-                    print("to remove: ", to_remove)
-                    for fail in to_remove:
-                        current_dom.remove(fail)
-                    print("current_dom (after): ", current_dom)
-
-                    for elem in current_dom:
+                            if self.valid_manhattan(state, elem, i, j) and self.free_neighbors(state, elem, i, j):
+                                possible_neighbors.append(elem)
+                    # print("to remove: ", to_remove)
+                    # for fail in to_remove:
+                    #     current_dom.remove(fail)
+                    # print("current_dom (after): ", current_dom)
+                    print("possible_neighbors: ", possible_neighbors)
+                    possible_actions = self.optimize_actions(board, possible_neighbors)
+                    for elem in possible_actions:
                         actions.append((i+1, j+1, elem))
-        # print("\nActions:\n", actions)
+        print("\nActions:\n", actions)
+        self.uni_actions = actions
         cel_actions = self.select_next_actions(actions, len(board))
         print("\nCELL ACTIONS:\n", cel_actions)
         return cel_actions
@@ -393,7 +395,7 @@ class Numbrix(Problem):
         for action in actions:
             board_freq[action[0]-1][action[1]-1]+=1
         
-        # print(board_freq)
+        print("\nBOARD FREQ\n", board_freq)
 
         for i in range (size):
             for j in range (size):
@@ -443,9 +445,10 @@ class Numbrix(Problem):
 
     def h(self, node: Node):
         """ Função heuristica utilizada para a procura A*. """
+        # conta o número de ações para determinado valor
         return 1
     
-    def optimize_actions(self, board: Board, actions: list):
+    def optimize_actions(self, board: list, actions: list):
         
         for i in range (len(board)):
             for j in range (len(board)):

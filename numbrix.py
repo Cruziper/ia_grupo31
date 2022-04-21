@@ -384,7 +384,9 @@ class Numbrix(Problem):
                         actions.append((i+1,j+1,x))
         # print("\nActions:\n", actions)
         self.uni_actions= actions
-        return actions
+        best_actions = self.return_best_actions(actions, len(board))
+        # print(best_actions)
+        return best_actions
 
     def anyblocked(self, state: NumbrixState):
         board = state.board.board
@@ -572,6 +574,72 @@ class Numbrix(Problem):
             if action[2] == index+1:
                 selected_action = action
         return selected_action
+    
+    # def return_best_actions(self, actions, size):
+    #     best_actions = []
+    #     board_freq = []
+    #     min_row = 0
+    #     min_col = 0
+    #     current_min = 0
+    #     # print("actions: ", actions)
+    #     for i in range (size):
+    #         row = []
+    #         for j in range (size):
+    #             row.append(0)
+    #         board_freq.append(row)
+        
+    #     #criar "board" com frequencias, ver qual tem menor e diferente de zero
+    #     for action in actions:
+    #         board_freq[action[0]-1][action[1]-1]+=1
+        
+    #     for i in range (size):
+    #         for j in range (size):
+    #             if current_min == 0 and board_freq[i][j] != 0:
+    #                 current_min = board_freq[i][j]
+    #                 min_row = i
+    #                 min_col = j
+    #             else:
+    #                 if board_freq[i][j] < current_min and board_freq[i][j] != 0:
+    #                     current_min = board_freq[i][j]
+    #                     min_row = i
+    #                     min_col = j
+        
+    #     for action in actions:
+    #         if action[0]-1 == min_row and action[1]-1 == min_col:
+    #             best_actions.append(action)
+        
+    #     # retornar ações para essa
+    #     # print(best_actions)
+    #     return best_actions
+
+    def return_best_actions(self, actions, size):
+        best_actions = []
+        # conta o número de ações para determinado valor
+        freq = [0] * size*size
+        for action in actions:
+            freq[action[2]-1]+=1
+        
+        for i in range (len(freq)):
+            if freq[i] != 0:
+                current_min = freq[i]
+                # pega no primeiro diferente de zero
+                break;
+        
+        for i in range (len(freq)):
+            if freq[i] != 0 and freq[i] < current_min:
+                current_min = freq[i]
+                # encontra o verdadeiro min
+
+        # retorna o index da action do valor com menos frequência
+        for i in range (len(freq)):
+            if freq[i] != 0 and freq[i] == current_min:
+                index = i
+        
+        for action in actions:
+            if action[2] == index+1:
+                best_actions.append(action)
+        
+        return best_actions
 
     def result(self, state: NumbrixState, action):
         """ Retorna o estado resultante de executar a 'action' sobre

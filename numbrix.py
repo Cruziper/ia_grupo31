@@ -10,6 +10,7 @@ import copy
 import sys
 
 from search import Problem, Node, astar_search, breadth_first_tree_search, depth_first_tree_search, greedy_search, recursive_best_first_search
+from utils import manhattan_distance
 
 ###################################################################################################
 #                                         NUMBRIXSTATE                                            #
@@ -144,6 +145,7 @@ class Numbrix(Problem):
                     not_unique = True
                     horiz_nei = list(state.board.adjacent_horizontal_numbers(i+1, j+1))
                     vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
+                    
                     if horiz_nei[0] != None and horiz_nei[1] != None:
                         if horiz_nei[1] == horiz_nei[0]+2:
                             possible_neighbors.append(horiz_nei[0]+1)
@@ -165,7 +167,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if horiz_nei[0]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j) and self.free_neighbors(state, horiz_nei[0]+1, i, j):
+                            if horiz_nei[0]+1 not in possible_neighbors:
                                 possible_neighbors.append(horiz_nei[0]+1)
                         else:
                             if horiz_nei[0]+1 < len(board)*len(board) and horiz_nei[0]+1 > 1:
@@ -173,24 +175,24 @@ class Numbrix(Problem):
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == horiz_nei[0]+2:
-                                        if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j) and self.free_neighbors(state, horiz_nei[0]+1, i, j):
+                                        if horiz_nei[0]+1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[0]+1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[0]+2:
-                                        if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j) and self.free_neighbors(state, horiz_nei[0]+1, i, j):
+                                        if horiz_nei[0]+1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[0]+1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[0]+2:
-                                        if horiz_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]+1, i, j) and self.free_neighbors(state, horiz_nei[0]+1, i, j):
+                                        if horiz_nei[0]+1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[0]+1)
                         ## MENOS UM ##
                         if horiz_nei[0]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j) and self.free_neighbors(state, horiz_nei[0]-1, i, j):
+                            if horiz_nei[0]-1 not in possible_neighbors :
                                 possible_neighbors.append(horiz_nei[0]-1)
                         else:
                             if horiz_nei[0]-1 > 1:
@@ -198,19 +200,19 @@ class Numbrix(Problem):
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == horiz_nei[0]-2:
-                                        if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j) and self.free_neighbors(state, horiz_nei[0]-1, i, j):
+                                        if horiz_nei[0]-1 not in possible_neighbors :
                                             possible_neighbors.append(horiz_nei[0]-1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[0]-2:
-                                        if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j) and self.free_neighbors(state, horiz_nei[0]-1, i, j):
+                                        if horiz_nei[0]-1 not in possible_neighbors :
                                             possible_neighbors.append(horiz_nei[0]-1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[0]-2:
-                                        if horiz_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[0]-1, i, j) and self.free_neighbors(state, horiz_nei[0]-1, i, j):
+                                        if horiz_nei[0]-1 not in possible_neighbors :
                                             possible_neighbors.append(horiz_nei[0]-1)
                     ##########################################################################################################################
 
@@ -220,7 +222,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if horiz_nei[1]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j) and self.free_neighbors(state, horiz_nei[1]+1, i, j) and self.free_neighbors(state, horiz_nei[1]+1, i, j):
+                            if horiz_nei[1]+1 not in possible_neighbors:
                                 possible_neighbors.append(horiz_nei[1]+1)
                         else:
                             if horiz_nei[1]+1 < len(board)*len(board) and horiz_nei[1]+1 > 1:
@@ -228,24 +230,24 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == horiz_nei[1]+2:
-                                        if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j) and self.free_neighbors(state, horiz_nei[1]+1, i, j):
+                                        if horiz_nei[1]+1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[1]+1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[1]+2:
-                                        if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j) and self.free_neighbors(state, horiz_nei[1]+1, i, j):
+                                        if horiz_nei[1]+1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[1]+1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[1]+2:
-                                        if horiz_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]+1, i, j) and self.free_neighbors(state, horiz_nei[1]+1, i, j):
+                                        if horiz_nei[1]+1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[1]+1)
                         ## MENOS UM ##
                         if horiz_nei[1]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j) and self.free_neighbors(state, horiz_nei[1]-1, i, j):
+                            if horiz_nei[1]-1 not in possible_neighbors:
                                 possible_neighbors.append(horiz_nei[1]-1)
                         else:
                             if horiz_nei[1]-1 > 1:
@@ -253,19 +255,19 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == horiz_nei[1]-2:
-                                        if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j) and self.free_neighbors(state, horiz_nei[1]-1, i, j):
+                                        if horiz_nei[1]-1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[1]-1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[1]-2:
-                                        if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j) and self.free_neighbors(state, horiz_nei[1]-1, i, j):
+                                        if horiz_nei[1]-1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[1]-1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[1]-2:
-                                        if horiz_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, horiz_nei[1]-1, i, j) and self.free_neighbors(state, horiz_nei[1]-1, i, j):
+                                        if horiz_nei[1]-1 not in possible_neighbors:
                                             possible_neighbors.append(horiz_nei[1]-1)
                     ##########################################################################################################################
 
@@ -275,7 +277,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if vert_nei[0]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j) and self.free_neighbors(state, vert_nei[0]+1, i, j):
+                            if vert_nei[0]+1 not in possible_neighbors:
                                 possible_neighbors.append(vert_nei[0]+1)
                         else:
                             if vert_nei[0]+1 < len(board)*len(board) and vert_nei[0]+1 > 1:
@@ -283,24 +285,24 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[0]+2:
-                                        if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j) and self.free_neighbors(state, vert_nei[0]+1, i, j):
+                                        if vert_nei[0]+1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[0]+1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[0]+2:
-                                        if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j) and self.free_neighbors(state, vert_nei[0]+1, i, j):
+                                        if vert_nei[0]+1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[0]+1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == vert_nei[0]+2:
-                                        if vert_nei[0]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]+1, i, j) and self.free_neighbors(state, vert_nei[0]+1, i, j):
+                                        if vert_nei[0]+1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[0]+1)
                         ## MENOS UM ##
                         if vert_nei[0]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j) and self.free_neighbors(state, vert_nei[0]-1, i, j):
+                            if vert_nei[0]-1 not in possible_neighbors:
                                 possible_neighbors.append(vert_nei[0]-1)
                         else:
                             if vert_nei[0]-1 > 1:
@@ -308,19 +310,19 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[0]-2:
-                                        if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j) and self.free_neighbors(state, vert_nei[0]-1, i, j):
+                                        if vert_nei[0]-1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[0]-1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[0]-2:
-                                        if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j) and self.free_neighbors(state, vert_nei[0]-1, i, j):
+                                        if vert_nei[0]-1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[0]-1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == vert_nei[0]-2:
-                                        if vert_nei[0]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[0]-1, i, j) and self.free_neighbors(state, vert_nei[0]-1, i, j):
+                                        if vert_nei[0]-1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[0]-1)
                     ##########################################################################################################################
 
@@ -330,7 +332,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if vert_nei[1]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j) and self.free_neighbors(state, vert_nei[1]+1, i, j):
+                            if vert_nei[1]+1 not in possible_neighbors:
                                 possible_neighbors.append(vert_nei[1]+1)
                         else:
                             if vert_nei[1]+1 < len(board)*len(board) and vert_nei[1]+1 > 1:
@@ -338,24 +340,24 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[1]+2:
-                                        if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j) and self.free_neighbors(state, vert_nei[1]+1, i, j):
+                                        if vert_nei[1]+1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[1]+1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[1]+2:
-                                        if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j) and self.free_neighbors(state, vert_nei[1]+1, i, j):
+                                        if vert_nei[1]+1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[1]+1)
                                     
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == vert_nei[1]+2:
-                                        if vert_nei[1]+1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]+1, i, j) and self.free_neighbors(state, vert_nei[1]+1, i, j):
+                                        if vert_nei[1]+1 not in possible_neighbors:
                                             possible_neighbors.append(vert_nei[1]+1)
                         ## MENOS UM ##
                         if vert_nei[1]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j) and self.free_neighbors(state, vert_nei[1]-1, i, j):
+                            if vert_nei[1]-1 not in possible_neighbors :
                                 possible_neighbors.append(vert_nei[1]-1)
                         else:
                             if vert_nei[1]-1 > 1:
@@ -363,62 +365,32 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[1]-2:
-                                        if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j) and self.free_neighbors(state, vert_nei[1]-1, i, j):
+                                        if vert_nei[1]-1 not in possible_neighbors :
                                             possible_neighbors.append(vert_nei[1]-1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[1]-2:
-                                        if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j) and self.free_neighbors(state, vert_nei[1]-1, i, j):
+                                        if vert_nei[1]-1 not in possible_neighbors :
                                             possible_neighbors.append(vert_nei[1]-1)
                                     
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == vert_nei[1]-2:
-                                        if vert_nei[1]-1 not in possible_neighbors and self.valid_manhattan(state, vert_nei[1]-1, i, j) and self.free_neighbors(state, vert_nei[1]-1, i, j):
+                                        if vert_nei[1]-1 not in possible_neighbors :
                                             possible_neighbors.append(vert_nei[1]-1)
                     ##########################################################################################################################
-
-                    possible_actions = Numbrix.optimize_actions(self, board, possible_neighbors)
+                    possible_actions = self.optimize_actions(board, possible_neighbors)
+                    if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0 and possible_actions == []:
+                        return []
                     for x in possible_actions:
-                        actions.append((i+1,j+1,x))
+                        if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
+                            actions.append((i+1,j+1,x))
         # print("\nActions:\n", actions)
         self.uni_actions= actions
         best_actions = self.return_best_actions(actions, len(board))
         # print(best_actions)
         return best_actions
-
-    def anyblocked(self, state: NumbrixState):
-        board = state.board.board
-        flag = True
-
-        for i in range (len(board)):
-            for j in range (len(board)):
-                current = board[i][j]
-                if flag == False:
-                    return True
-                if current != 0:
-                    horiz_nei = list(state.board.adjacent_horizontal_numbers(i+1, j+1))
-                    vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
-                    neighbors = (horiz_nei[0], horiz_nei[1], vert_nei[0], vert_nei[1])
-                    if current == 1:
-                        # nao tem anterior
-                        if current+1 not in neighbors and neighbors.count(0) < 1:
-                            flag = False
-                    if current == len(board)*len(board):
-                        # nao tem seguinte
-                        if current-1 not in neighbors and neighbors.count(0) < 1:
-                            flag = False
-                    else:
-                        if current+1 not in neighbors and current-1 not in neighbors and neighbors.count(0) < 2:
-                            flag = False
-                        if current+1 not in neighbors and current-1 in neighbors and neighbors.count(0) < 1:
-                            flag = False
-                        if current+1  in neighbors and current-1 not in neighbors and neighbors.count(0) < 1:
-                            flag = False
-        if flag == False:
-            return True
-        return False
     
     def free_neighbors (self, state: NumbrixState, num: int, row: int, col: int):
         esquerda = True
@@ -547,7 +519,7 @@ class Numbrix(Problem):
         return True
 
     def select_next_action(self, actions, size):
-        selected_action = ()
+        selected_actions = []
         index = 0
         # conta o número de ações para determinado valor
         freq = [0] * size
@@ -572,45 +544,8 @@ class Numbrix(Problem):
         
         for action in actions:
             if action[2] == index+1:
-                selected_action = action
-        return selected_action
-    
-    # def return_best_actions(self, actions, size):
-    #     best_actions = []
-    #     board_freq = []
-    #     min_row = 0
-    #     min_col = 0
-    #     current_min = 0
-    #     # print("actions: ", actions)
-    #     for i in range (size):
-    #         row = []
-    #         for j in range (size):
-    #             row.append(0)
-    #         board_freq.append(row)
-        
-    #     #criar "board" com frequencias, ver qual tem menor e diferente de zero
-    #     for action in actions:
-    #         board_freq[action[0]-1][action[1]-1]+=1
-        
-    #     for i in range (size):
-    #         for j in range (size):
-    #             if current_min == 0 and board_freq[i][j] != 0:
-    #                 current_min = board_freq[i][j]
-    #                 min_row = i
-    #                 min_col = j
-    #             else:
-    #                 if board_freq[i][j] < current_min and board_freq[i][j] != 0:
-    #                     current_min = board_freq[i][j]
-    #                     min_row = i
-    #                     min_col = j
-        
-    #     for action in actions:
-    #         if action[0]-1 == min_row and action[1]-1 == min_col:
-    #             best_actions.append(action)
-        
-    #     # retornar ações para essa
-    #     # print(best_actions)
-    #     return best_actions
+                selected_actions.append(action)
+        return selected_actions
 
     def return_best_actions(self, actions, size):
         best_actions = []
@@ -668,10 +603,50 @@ class Numbrix(Problem):
 
 
     def h(self, node: Node):
-        """ Função heuristica utilizada para a procura A*. """
-        best_action = self.select_next_action(self.uni_actions, node.state.board.boardSize*node.state.board.boardSize)
-        if best_action == node.action:
-            return 1
+        """ Função heuristica utilizada para a procura A*. """        
+        size = node.state.board.boardSize
+        best_actions = self.select_next_action(self.uni_actions, size*size)
+        selected_action = []
+        board_freq = []
+        min_row = 0
+        min_col = 0
+        current_min = 0
+
+        # conta o número de ações para determinado valor
+        freq = [0] * size * size
+        for action in self.uni_actions:
+            freq[action[2]-1]+=1
+
+        # print("actions: ", actions)
+        for i in range (size):
+            row = []
+            for j in range (size):
+                row.append(0)
+            board_freq.append(row)
+        
+        #criar "board" com frequencias, ver qual tem menor e diferente de zero
+        for action in best_actions:
+            board_freq[action[0]-1][action[1]-1]+=1
+        
+        # print("\nBOARD FREQ\n", board_freq)
+
+        for i in range (size):
+            for j in range (size):
+                if current_min == 0 and board_freq[i][j] != 0:
+                    current_min = board_freq[i][j]
+                    min_row = i
+                    min_col = j
+                else:
+                    if board_freq[i][j] < current_min and board_freq[i][j] != 0:
+                        current_min = board_freq[i][j]
+                        min_row = i
+                        min_col = j
+        
+        for action in best_actions:
+            if action[0]-1 == min_row and action[1]-1 == min_col:
+                selected_action.append(action)
+        if node.action in selected_action:
+            return freq[node.action[2]-1]
         else:
             return 100
     

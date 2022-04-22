@@ -124,6 +124,7 @@ class Board:
 ###################################################################################################
 class Numbrix(Problem):
     uni_actions = []
+    board_values = []
     last_action=(0,0,0)
 
     def __init__(self, board: Board):
@@ -137,6 +138,10 @@ class Numbrix(Problem):
         board = state.board.board
         # print("\nBoard:\n", state.board.to_string())
         actions = []
+        self.board_values = []
+        for i in range (len(board)):
+            for j in range (len(board)):
+                self.board_values.append(board[i][j])
 
         for i in range (len(board)):
             for j in range (len(board)):
@@ -147,17 +152,17 @@ class Numbrix(Problem):
                     vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
                     
                     if horiz_nei[0] != None and horiz_nei[1] != None:
-                        if horiz_nei[1] == horiz_nei[0]+2:
+                        if horiz_nei[1] == horiz_nei[0]+2 and horiz_nei[0]+1 not in self.board_values:
                             possible_neighbors.append(horiz_nei[0]+1)
                             not_unique = False
-                        if horiz_nei[1] == horiz_nei[0]-2:
+                        if horiz_nei[1] == horiz_nei[0]-2 and horiz_nei[0]-1 not in self.board_values:
                             possible_neighbors.append(horiz_nei[0]-1)
                             not_unique = False
                     if vert_nei[0] != None and vert_nei[1] != None:
-                        if vert_nei[1] == vert_nei[0]+2:
+                        if vert_nei[1] == vert_nei[0]+2 and vert_nei[0]+1 not in self.board_values:
                             possible_neighbors.append(vert_nei[0]+1)
                             not_unique = False
-                        if vert_nei[1] == vert_nei[0]-2:
+                        if vert_nei[1] == vert_nei[0]-2 and vert_nei[0]-1 not in self.board_values:
                             possible_neighbors.append(vert_nei[0]-1)
                             not_unique = False
 
@@ -167,7 +172,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if horiz_nei[0]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if horiz_nei[0]+1 not in possible_neighbors:
+                            if horiz_nei[0]+1 not in possible_neighbors and horiz_nei[0]+1 not in self.board_values:
                                 possible_neighbors.append(horiz_nei[0]+1)
                         else:
                             if horiz_nei[0]+1 < len(board)*len(board) and horiz_nei[0]+1 > 1:
@@ -175,24 +180,24 @@ class Numbrix(Problem):
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == horiz_nei[0]+2:
-                                        if horiz_nei[0]+1 not in possible_neighbors:
+                                        if horiz_nei[0]+1 not in possible_neighbors and horiz_nei[0]+1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[0]+1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[0]+2:
-                                        if horiz_nei[0]+1 not in possible_neighbors:
+                                        if horiz_nei[0]+1 not in possible_neighbors and horiz_nei[0]+1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[0]+1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[0]+2:
-                                        if horiz_nei[0]+1 not in possible_neighbors:
+                                        if horiz_nei[0]+1 not in possible_neighbors and horiz_nei[0]+1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[0]+1)
                         ## MENOS UM ##
                         if horiz_nei[0]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if horiz_nei[0]-1 not in possible_neighbors :
+                            if horiz_nei[0]-1 not in possible_neighbors and horiz_nei[0]-1 not in self.board_values :
                                 possible_neighbors.append(horiz_nei[0]-1)
                         else:
                             if horiz_nei[0]-1 > 1:
@@ -200,19 +205,19 @@ class Numbrix(Problem):
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == horiz_nei[0]-2:
-                                        if horiz_nei[0]-1 not in possible_neighbors :
+                                        if horiz_nei[0]-1 not in possible_neighbors and horiz_nei[0]-1 not in self.board_values :
                                             possible_neighbors.append(horiz_nei[0]-1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[0]-2:
-                                        if horiz_nei[0]-1 not in possible_neighbors :
+                                        if horiz_nei[0]-1 not in possible_neighbors and horiz_nei[0]-1 not in self.board_values :
                                             possible_neighbors.append(horiz_nei[0]-1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[0]-2:
-                                        if horiz_nei[0]-1 not in possible_neighbors :
+                                        if horiz_nei[0]-1 not in possible_neighbors and horiz_nei[0]-1 not in self.board_values :
                                             possible_neighbors.append(horiz_nei[0]-1)
                     ##########################################################################################################################
 
@@ -222,7 +227,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if horiz_nei[1]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if horiz_nei[1]+1 not in possible_neighbors:
+                            if horiz_nei[1]+1 not in possible_neighbors and horiz_nei[1]+1 not in self.board_values:
                                 possible_neighbors.append(horiz_nei[1]+1)
                         else:
                             if horiz_nei[1]+1 < len(board)*len(board) and horiz_nei[1]+1 > 1:
@@ -230,24 +235,24 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == horiz_nei[1]+2:
-                                        if horiz_nei[1]+1 not in possible_neighbors:
+                                        if horiz_nei[1]+1 not in possible_neighbors and horiz_nei[1]+1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[1]+1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[1]+2:
-                                        if horiz_nei[1]+1 not in possible_neighbors:
+                                        if horiz_nei[1]+1 not in possible_neighbors and horiz_nei[1]+1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[1]+1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[1]+2:
-                                        if horiz_nei[1]+1 not in possible_neighbors:
+                                        if horiz_nei[1]+1 not in possible_neighbors and horiz_nei[1]+1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[1]+1)
                         ## MENOS UM ##
                         if horiz_nei[1]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if horiz_nei[1]-1 not in possible_neighbors:
+                            if horiz_nei[1]-1 not in possible_neighbors and horiz_nei[1]-1 not in self.board_values:
                                 possible_neighbors.append(horiz_nei[1]-1)
                         else:
                             if horiz_nei[1]-1 > 1:
@@ -255,19 +260,19 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == horiz_nei[1]-2:
-                                        if horiz_nei[1]-1 not in possible_neighbors:
+                                        if horiz_nei[1]-1 not in possible_neighbors and horiz_nei[1]-1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[1]-1)
                                 
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == horiz_nei[1]-2:
-                                        if horiz_nei[1]-1 not in possible_neighbors:
+                                        if horiz_nei[1]-1 not in possible_neighbors and horiz_nei[1]-1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[1]-1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == horiz_nei[1]-2:
-                                        if horiz_nei[1]-1 not in possible_neighbors:
+                                        if horiz_nei[1]-1 not in possible_neighbors and horiz_nei[1]-1 not in self.board_values:
                                             possible_neighbors.append(horiz_nei[1]-1)
                     ##########################################################################################################################
 
@@ -277,7 +282,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if vert_nei[0]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if vert_nei[0]+1 not in possible_neighbors:
+                            if vert_nei[0]+1 not in possible_neighbors and vert_nei[0]+1 not in self.board_values:
                                 possible_neighbors.append(vert_nei[0]+1)
                         else:
                             if vert_nei[0]+1 < len(board)*len(board) and vert_nei[0]+1 > 1:
@@ -285,24 +290,24 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[0]+2:
-                                        if vert_nei[0]+1 not in possible_neighbors:
+                                        if vert_nei[0]+1 not in possible_neighbors and vert_nei[0]+1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[0]+1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[0]+2:
-                                        if vert_nei[0]+1 not in possible_neighbors:
+                                        if vert_nei[0]+1 not in possible_neighbors and vert_nei[0]+1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[0]+1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == vert_nei[0]+2:
-                                        if vert_nei[0]+1 not in possible_neighbors:
+                                        if vert_nei[0]+1 not in possible_neighbors and vert_nei[0]+1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[0]+1)
                         ## MENOS UM ##
                         if vert_nei[0]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if vert_nei[0]-1 not in possible_neighbors:
+                            if vert_nei[0]-1 not in possible_neighbors and vert_nei[0]-1 not in self.board_values and vert_nei[0]-1 not in self.board_values:
                                 possible_neighbors.append(vert_nei[0]-1)
                         else:
                             if vert_nei[0]-1 > 1:
@@ -310,19 +315,19 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[0]-2:
-                                        if vert_nei[0]-1 not in possible_neighbors:
+                                        if vert_nei[0]-1 not in possible_neighbors and vert_nei[0]-1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[0]-1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[0]-2:
-                                        if vert_nei[0]-1 not in possible_neighbors:
+                                        if vert_nei[0]-1 not in possible_neighbors and vert_nei[0]-1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[0]-1)
                                     
                                 # para CIMA
                                 if vert_nei[1] != None:
                                     if vert_nei[1] == 0 or vert_nei[1] == vert_nei[0]-2:
-                                        if vert_nei[0]-1 not in possible_neighbors:
+                                        if vert_nei[0]-1 not in possible_neighbors and vert_nei[0]-1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[0]-1)
                     ##########################################################################################################################
 
@@ -332,7 +337,7 @@ class Numbrix(Problem):
                         ## MAIS UM ##
                         if vert_nei[1]+1 == len(board)*len(board):
                             # se o valor a colocar for o último
-                            if vert_nei[1]+1 not in possible_neighbors:
+                            if vert_nei[1]+1 not in possible_neighbors and vert_nei[1]+1 not in self.board_values:
                                 possible_neighbors.append(vert_nei[1]+1)
                         else:
                             if vert_nei[1]+1 < len(board)*len(board) and vert_nei[1]+1 > 1:
@@ -340,24 +345,24 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[1]+2:
-                                        if vert_nei[1]+1 not in possible_neighbors:
+                                        if vert_nei[1]+1 not in possible_neighbors and vert_nei[1]+1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[1]+1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[1]+2:
-                                        if vert_nei[1]+1 not in possible_neighbors:
+                                        if vert_nei[1]+1 not in possible_neighbors and vert_nei[1]+1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[1]+1)
                                     
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == vert_nei[1]+2:
-                                        if vert_nei[1]+1 not in possible_neighbors:
+                                        if vert_nei[1]+1 not in possible_neighbors and vert_nei[1]+1 not in self.board_values:
                                             possible_neighbors.append(vert_nei[1]+1)
                         ## MENOS UM ##
                         if vert_nei[1]-1 == 1:
                             # se o valor a colocar for o primeiro
-                            if vert_nei[1]-1 not in possible_neighbors :
+                            if vert_nei[1]-1 not in possible_neighbors and vert_nei[1]-1 not in self.board_values :
                                 possible_neighbors.append(vert_nei[1]-1)
                         else:
                             if vert_nei[1]-1 > 1:
@@ -365,24 +370,25 @@ class Numbrix(Problem):
                                 # pela ESQUERDA
                                 if horiz_nei[0] != None:
                                     if horiz_nei[0] == 0 or horiz_nei[0] == vert_nei[1]-2:
-                                        if vert_nei[1]-1 not in possible_neighbors :
+                                        if vert_nei[1]-1 not in possible_neighbors and vert_nei[1]-1 not in self.board_values :
                                             possible_neighbors.append(vert_nei[1]-1)
                                 
                                 # pela DIREITA
                                 if horiz_nei[1] != None:
                                     if horiz_nei[1] == 0 or horiz_nei[1] == vert_nei[1]-2:
-                                        if vert_nei[1]-1 not in possible_neighbors :
+                                        if vert_nei[1]-1 not in possible_neighbors and vert_nei[1]-1 not in self.board_values :
                                             possible_neighbors.append(vert_nei[1]-1)
                                     
                                 # para BAIXO
                                 if vert_nei[0] != None:
                                     if vert_nei[0] == 0 or vert_nei[0] == vert_nei[1]-2:
-                                        if vert_nei[1]-1 not in possible_neighbors :
+                                        if vert_nei[1]-1 not in possible_neighbors and vert_nei[1]-1 not in self.board_values :
                                             possible_neighbors.append(vert_nei[1]-1)
                     ##########################################################################################################################
-                    possible_actions = self.optimize_actions(board, possible_neighbors)
-                    if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0 and possible_actions == []:
+                    # possible_actions = self.optimize_actions(board, possible_neighbors)
+                    if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0 and possible_neighbors == []:
                         return []
+                    possible_actions = self.find_extra(board, possible_neighbors)
                     for x in possible_actions:
                         if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
                             actions.append((i+1,j+1,x))
@@ -391,6 +397,14 @@ class Numbrix(Problem):
         best_actions = self.return_best_actions(actions, len(board))
         # print(best_actions)
         return best_actions
+
+    def find_extra (self, board: list, neighbors: list):
+        for num in range (len(board)*len(board)):
+            if num not in self.board_values and num not in neighbors:
+                neighbors.append(num)
+        return neighbors
+
+
     
     def free_neighbors (self, state: NumbrixState, num: int, row: int, col: int):
         esquerda = True
@@ -589,6 +603,7 @@ class Numbrix(Problem):
             col = action[1]
             nmbr = action[2]
             new_state.board.board[row-1][col-1] = nmbr
+            self.board_values.append(nmbr)
         return new_state
 
     def goal_test(self, state: NumbrixState):

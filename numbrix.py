@@ -388,7 +388,7 @@ class Numbrix(Problem):
                     # possible_actions = self.optimize_actions(board, possible_neighbors)
                     if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0 and possible_neighbors == []:
                         return []
-                    possible_actions = self.find_extra(board, possible_neighbors)
+                    possible_actions = self.find_extra(state, i, j, possible_neighbors)
                     for x in possible_actions:
                         if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
                             actions.append((i+1,j+1,x))
@@ -398,10 +398,12 @@ class Numbrix(Problem):
         # print(best_actions)
         return best_actions
 
-    def find_extra (self, board: list, neighbors: list):
+    def find_extra (self, state: NumbrixState, row: int, col: int, neighbors: list):
+        board = state.board.board
         for num in range (len(board)*len(board)):
             if num not in self.board_values and num not in neighbors:
-                neighbors.append(num)
+                if self.valid_manhattan(state, num, row, col) and self.free_neighbors(state, num, row, col):
+                    neighbors.append(num)
         return neighbors
 
 

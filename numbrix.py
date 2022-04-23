@@ -125,6 +125,7 @@ class Board:
 class Numbrix(Problem):
     uni_actions = []
     board_values = []
+    all_possible_neighbors = []
     last_action=(0,0,0)
 
     def __init__(self, board: Board):
@@ -150,15 +151,14 @@ class Numbrix(Problem):
                     not_unique = True
                     horiz_nei = list(state.board.adjacent_horizontal_numbers(i+1, j+1))
                     vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
-                    
-                    if horiz_nei[0] != None and horiz_nei[1] != None:
+                    if horiz_nei[0] != None and horiz_nei[1] != None and horiz_nei[0] != 0 and horiz_nei[1] != 0:
                         if horiz_nei[1] == horiz_nei[0]+2 and horiz_nei[0]+1 not in self.board_values:
                             possible_neighbors.append(horiz_nei[0]+1)
                             not_unique = False
                         if horiz_nei[1] == horiz_nei[0]-2 and horiz_nei[0]-1 not in self.board_values:
                             possible_neighbors.append(horiz_nei[0]-1)
                             not_unique = False
-                    if vert_nei[0] != None and vert_nei[1] != None:
+                    if vert_nei[0] != None and vert_nei[1] != None and vert_nei[0] != 0 and vert_nei[1] != 0:
                         if vert_nei[1] == vert_nei[0]+2 and vert_nei[0]+1 not in self.board_values:
                             possible_neighbors.append(vert_nei[0]+1)
                             not_unique = False
@@ -389,29 +389,14 @@ class Numbrix(Problem):
                     if possible_neighbors == []:
                         if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0:
                             return []
-                    if horiz_nei[0] == 0 or horiz_nei[1] == 0 or vert_nei[0] == 0 or vert_nei[1] == 0:
-                        for num in range (len(board)*len(board)):
-                            if num != 0 and num not in possible_neighbors and num not in self.board_values:
-                                possible_neighbors.append(num)
                     for x in possible_neighbors:
                         if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
                             actions.append((i+1,j+1,x))
-        # print("\nActions:\n", actions)
+        # print("\nActions:\n"s, actions)
         self.uni_actions= actions
         best_actions = self.return_best_actions(actions, len(board))
-        # print(best_actions)
         return best_actions
-
-    def find_extra (self, state: NumbrixState, row: int, col: int, neighbors: list):
-        board = state.board.board
-        for num in range (len(board)*len(board)):
-            if num not in self.board_values and num not in neighbors:
-                if self.valid_manhattan(state, num, row, col) and self.free_neighbors(state, num, row, col):
-                    neighbors.append(num)
-        return neighbors
-
-
-    
+   
     def free_neighbors (self, state: NumbrixState, num: int, row: int, col: int):
         esquerda = True
         direita = True

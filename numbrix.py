@@ -610,11 +610,6 @@ class Numbrix(Problem):
         min_col = 0
         current_min = 0
 
-        # conta o número de ações para determinado valor
-        freq = [0] * size * size
-        for action in self.uni_actions:
-            freq[action[2]-1]+=1
-
         for i in range (size):
             row = []
             for j in range (size):
@@ -641,7 +636,7 @@ class Numbrix(Problem):
             if action[0]-1 == min_row and action[1]-1 == min_col:
                 selected_action.append(action)
         if node.action in selected_action:
-            return freq[node.action[2]-1]
+            return 1
         else:
             return 100
     

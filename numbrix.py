@@ -386,10 +386,14 @@ class Numbrix(Problem):
                                             possible_neighbors.append(vert_nei[1]-1)
                     ##########################################################################################################################
                     # possible_actions = self.optimize_actions(board, possible_neighbors)
-                    if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0 and possible_neighbors == []:
-                        return []
-                    possible_actions = self.find_extra(state, i, j, possible_neighbors)
-                    for x in possible_actions:
+                    if possible_neighbors == []:
+                        if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0:
+                            return []
+                    if horiz_nei[0] == 0 or horiz_nei[1] == 0 or vert_nei[0] == 0 or vert_nei[1] == 0:
+                        for num in range (len(board)*len(board)):
+                            if num != 0 and num not in possible_neighbors and num not in self.board_values:
+                                possible_neighbors.append(num)
+                    for x in possible_neighbors:
                         if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
                             actions.append((i+1,j+1,x))
         # print("\nActions:\n", actions)

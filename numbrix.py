@@ -380,7 +380,6 @@ class Numbrix(Problem):
                                         if vert_nei[1]-1 not in possible_neighbors and vert_nei[1]-1 not in state.board.board_nums :
                                             possible_neighbors.append(vert_nei[1]-1)
                     ##########################################################################################################################
-                    # possible_actions = self.optimize_actions(board, possible_neighbors)
                     if possible_neighbors == []:
                         if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0:
                             return []
@@ -513,9 +512,7 @@ class Numbrix(Problem):
             for j in range(len(state.board.board)):
                 if state.board.board[i][j] != 0 and state.board.board[i][j] != num1:
                     if self.get_manhattan_distance(row, col, i, j) > abs(num1-state.board.board[i][j]):
-                        # print("Manhattan for ", num1, " and ", state.board.board[i][j], " = FALSE")
                         return False
-        # print("Manhattan for ", num1, " = TRUE")
         return True
 
     def select_next_action(self, actions, size):
@@ -618,7 +615,6 @@ class Numbrix(Problem):
         for action in self.uni_actions:
             freq[action[2]-1]+=1
 
-        # print("actions: ", actions)
         for i in range (size):
             row = []
             for j in range (size):
@@ -629,8 +625,6 @@ class Numbrix(Problem):
         for action in best_actions:
             board_freq[action[0]-1][action[1]-1]+=1
         
-        # print("\nBOARD FREQ\n", board_freq)
-
         for i in range (size):
             for j in range (size):
                 if current_min == 0 and board_freq[i][j] != 0:
@@ -651,51 +645,10 @@ class Numbrix(Problem):
         else:
             return 100
     
-    def optimize_actions(self, board: Board, actions: list):
-        
-        for i in range (len(board)):
-            for j in range (len(board)):
-                if int(board[i][j]) in actions:
-                    actions.remove(int(board[i][j]))
-        
-        return actions
-
-
 ###################################################################################################
 #                                             MAIN                                                #
 ###################################################################################################
 if __name__ == "__main__":
-
-    # # Ler o ficheiro de input de sys.argv[1],
-    # board = Board.parse_instance(sys.argv[1])
-    # problem = Numbrix(board)
-
-    # # Usar uma técnica de procura para resolver a instância,
-    # goal_node = depth_first_tree_search(problem)
-
-    # # Retirar a solução a partir do nó resultante,
-
-    # # Imprimir para o standard output no formato indicado.
-    # print("Solution:\n", goal_node.state.board.to_string(), sep="")
-
-    ### Exemplo 3 ###
-    # board = Board.parse_instance(sys.argv[1])
-    
-    # problem = Numbrix(board)
-
-    # s0 = NumbrixState(board)
-    # print("Initial:\n", s0.board.to_string(), sep="")
-
-    # s1 = problem.result(s0, (2, 2, 1))
-    # s2 = problem.result(s1, (0, 2, 3))
-    # s3 = problem.result(s2, (0, 1, 4))
-    # s4 = problem.result(s3, (1, 1, 5))
-    # s5 = problem.result(s4, (2, 0, 7))
-    # s6 = problem.result(s5, (1, 0, 8))
-    # s7 = problem.result(s6, (0, 0, 9))
-
-    # print("Is goal?", problem.goal_test(s7))
-    # print("Solution:\n", s7.board.to_string(), sep="")
 
     ### Exemplo 4 ###
     board = Board.parse_instance(sys.argv[1])
@@ -705,4 +658,5 @@ if __name__ == "__main__":
     goal_node = astar_search(problem)
 
     print(goal_node.state.board.to_string(), sep="")
+
     pass

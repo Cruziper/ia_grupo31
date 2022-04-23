@@ -602,48 +602,7 @@ class Numbrix(Problem):
 
     def h(self, node: Node):
         """ Função heuristica utilizada para a procura A*. """        
-        size = node.state.board.boardSize
-        best_actions = self.select_next_action(self.uni_actions, size*size)
-        selected_action = []
-        board_freq = []
-        min_row = 0
-        min_col = 0
-        current_min = 0
-
-        # conta o número de ações para determinado valor
-        freq = [0] * size * size
-        for action in self.uni_actions:
-            freq[action[2]-1]+=1
-
-        for i in range (size):
-            row = []
-            for j in range (size):
-                row.append(0)
-            board_freq.append(row)
-        
-        #criar "board" com frequencias, ver qual tem menor e diferente de zero
-        for action in best_actions:
-            board_freq[action[0]-1][action[1]-1]+=1
-        
-        for i in range (size):
-            for j in range (size):
-                if current_min == 0 and board_freq[i][j] != 0:
-                    current_min = board_freq[i][j]
-                    min_row = i
-                    min_col = j
-                else:
-                    if board_freq[i][j] < current_min and board_freq[i][j] != 0:
-                        current_min = board_freq[i][j]
-                        min_row = i
-                        min_col = j
-        
-        for action in best_actions:
-            if action[0]-1 == min_row and action[1]-1 == min_col:
-                selected_action.append(action)
-        if node.action in selected_action:
-            return freq[node.action[2]-1]
-        else:
-            return 100
+        return 1
     
 ###################################################################################################
 #                                             MAIN                                                #

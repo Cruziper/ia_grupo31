@@ -148,17 +148,21 @@ class Numbrix(Problem):
                     vert_nei = list(state.board.adjacent_vertical_numbers(i+1, j+1))
                     if horiz_nei[0] != None and horiz_nei[1] != None and horiz_nei[0] != 0 and horiz_nei[1] != 0:
                         if horiz_nei[1] == horiz_nei[0]+2 and horiz_nei[0]+1 not in state.board.board_nums:
-                            possible_neighbors.append(horiz_nei[0]+1)
+                            board[i][j] = horiz_nei[0]+1
+                            # possible_neighbors.append(horiz_nei[0]+1)
                             not_unique = False
                         if horiz_nei[1] == horiz_nei[0]-2 and horiz_nei[0]-1 not in state.board.board_nums:
-                            possible_neighbors.append(horiz_nei[0]-1)
+                            board[i][j] = horiz_nei[0]-1
+                            # possible_neighbors.append(horiz_nei[0]-1)
                             not_unique = False
                     if vert_nei[0] != None and vert_nei[1] != None and vert_nei[0] != 0 and vert_nei[1] != 0:
                         if vert_nei[1] == vert_nei[0]+2 and vert_nei[0]+1 not in state.board.board_nums:
-                            possible_neighbors.append(vert_nei[0]+1)
+                            board[i][j] = vert_nei[0]+1
+                            # possible_neighbors.append(vert_nei[0]+1)
                             not_unique = False
                         if vert_nei[1] == vert_nei[0]-2 and vert_nei[0]-1 not in state.board.board_nums:
-                            possible_neighbors.append(vert_nei[0]-1)
+                            board[i][j] = vert_nei[0]-1
+                            # possible_neighbors.append(vert_nei[0]-1)
                             not_unique = False
 
                     ######################################################## ESQUERDA ########################################################
@@ -380,15 +384,19 @@ class Numbrix(Problem):
                                         if vert_nei[1]-1 not in possible_neighbors and vert_nei[1]-1 not in state.board.board_nums :
                                             possible_neighbors.append(vert_nei[1]-1)
                     ##########################################################################################################################
-                    if possible_neighbors == []:
+                    if possible_neighbors == [] and not_unique:
                         if horiz_nei[0] != 0 and horiz_nei[1] != 0 and vert_nei[0] != 0 and vert_nei[1] != 0:
                             return []
-                    for x in possible_neighbors:
-                        if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
-                            actions.append((i+1,j+1,x))
-        # print("\nActions:\n"s, actions)
-        self.uni_actions= actions
-        best_actions = self.return_best_actions(actions, len(board))
+                    if not_unique:
+                        for x in possible_neighbors:
+                            if self.valid_manhattan(state, x, i, j) and self.free_neighbors(state, x, i, j):
+                                actions.append((i+1,j+1,x))
+        
+        # print("\nActions:\n", actions)
+        self.uni_actions = actions
+        if not_unique:
+            best_actions = self.return_best_actions(actions, len(board))
+        # print("\nBEST Actions:\n", best_actions)
         return best_actions
    
     def free_neighbors (self, state: NumbrixState, num: int, row: int, col: int):
@@ -498,20 +506,12 @@ class Numbrix(Problem):
         """ Recebe como input a posição duas posições e calcula a distancia
         de manhattan até à mesma"""
         return int(abs(pos1X-pos2X)+abs(pos1Y-pos2Y))
-        
-    def get_coordinates(state: NumbrixState, num:int):
-        for i in  range (len(state.board.board)):
-            for j in range(len(state.board.board)):
-                if num == state.board.board[i][j]:
-                    coord = (i,j)
-                    return coord
-        return False
 
-    def valid_manhattan(self, state: NumbrixState, num1:int, row: int, col: int):
+    def valid_manhattan(self, state: NumbrixState, num: int, row: int, col: int):
         for i in  range (len(state.board.board)):
             for j in range(len(state.board.board)):
-                if state.board.board[i][j] != 0 and state.board.board[i][j] != num1:
-                    if self.get_manhattan_distance(row, col, i, j) > abs(num1-state.board.board[i][j]):
+                if state.board.board[i][j] != 0 and state.board.board[i][j] != num:
+                    if self.get_manhattan_distance(row, col, i, j) > abs(num-state.board.board[i][j]):
                         return False
         return True
 

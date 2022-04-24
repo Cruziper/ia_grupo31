@@ -33,6 +33,7 @@ class Board:
     boardSize = 0
     board = []
     board_nums = []
+    board_cells = []
     """ Representação interna de um tabuleiro de Numbrix. """
     
     def get_number(self, row: int, col: int) -> int:
@@ -81,14 +82,17 @@ class Board:
         uma instância da classe Board. """
         boardClass = Board()
         board = []
+        i = 0
         with open(filename, "r") as f:
             # index 0 --> N
             boardClass.boardSize = int(f.readline())
             for line in f:
                 row = [int(column.strip()) for column in line.split('\t')]
-                for num in row:
-                    if num != 0:
-                        boardClass.board_nums.append(num)
+                for j in range (len(row)):
+                    if row[j] != 0:
+                        boardClass.board_nums.append(row[j])
+                        boardClass.board_cells.append((i+1, j+1, row[j]))
+                i += 1
                 board.append(row)
         boardClass.board = board
         return boardClass
@@ -104,10 +108,11 @@ class Board:
     def __size__():
         return Board.boardSize
 
-    def initializeBoard (self, boardL: list, nums: list):
+    def initializeBoard (self, boardL: list, nums: list, board_cells: list):
         self.board = copy.deepcopy(boardL)
         self.boardSize = len(boardL)
         self.board_nums = copy.deepcopy(nums)
+        self.board_cells = copy.deepcopy(board_cells)
     
     def to_string(self):
         board_str=""
@@ -498,20 +503,13 @@ class Numbrix(Problem):
         """ Recebe como input a posição duas posições e calcula a distancia
         de manhattan até à mesma"""
         return int(abs(pos1X-pos2X)+abs(pos1Y-pos2Y))
-        
-    def get_coordinates(state: NumbrixState, num:int):
-        for i in  range (len(state.board.board)):
-            for j in range(len(state.board.board)):
-                if num == state.board.board[i][j]:
-                    coord = (i,j)
-                    return coord
-        return False
 
-    def valid_manhattan(self, state: NumbrixState, num1:int, row: int, col: int):
-        for i in  range (len(state.board.board)):
-            for j in range(len(state.board.board)):
-                if state.board.board[i][j] != 0 and state.board.board[i][j] != num1:
-                    if self.get_manhattan_distance(row, col, i, j) > abs(num1-state.board.board[i][j]):
+    def valid_manhattan(self, state: NumbrixState, num:int, row: int, col: int):
+        board_cells = state.board.board_cells
+        # print(board_cells)
+        for cell in board_cells:
+            if cell[2] != 0 and cell[2] != num:
+                if self.get_manhattan_distance(row, col, cell[0]-1, cell[1]-1) > abs(num-cell[2]):
                         return False
         return True
 
@@ -579,7 +577,7 @@ class Numbrix(Problem):
         das presentes na lista obtida pela execução de 
         self.actions(state). """
         boardAux = Board()
-        boardAux.initializeBoard(state.board.board, state.board.board_nums)
+        boardAux.initializeBoard(state.board.board, state.board.board_nums, state.board.board_cells)
         new_state = NumbrixState(boardAux)
         if action != ():
             row = action[0]
@@ -587,6 +585,7 @@ class Numbrix(Problem):
             nmbr = action[2]
             new_state.board.board[row-1][col-1] = nmbr
             new_state.board.board_nums.append(nmbr)
+            new_state.board.board_cells.append((row, col, nmbr))
         return new_state
 
     def goal_test(self, state: NumbrixState):
